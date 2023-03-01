@@ -56,6 +56,7 @@
   <title>Fish Shooter</title>
 
   <script type="text/javascript" src="js/quark.base-1.0.0.alpha.min.js"></script>
+  <script type="text/javascript" src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
   <!--<script type="text/javascript" src="fishjoy.game.js"></script>-->
   <script type="text/javascript" src="src/R.js"></script>
   <script type="text/javascript" src="src/Utils.js"></script>
@@ -91,6 +92,20 @@
     axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
     axios.defaults.headers.post['Content-Type'] = 'application/json';
 
+    function loadSound() {
+      createjs.Sound.registerSound("audio/fire.ogg", "fire");
+      createjs.Sound.registerSound("audio/change.ogg", "change");
+      createjs.Sound.registerSound("audio/bgsound.ogg", "bgm");
+      createjs.Sound.registerSound("audio/coins.ogg", "coins");
+    }
+
+    function mute() {
+      createjs.Sound.muted = true;
+    }
+
+    function unmute() {
+      createjs.Sound.muted = false;
+    }
     // var _gaq = _gaq || [];
     // _gaq.push(['_setAccount', 'UA-6184226-21']);
     // _gaq.push(['_setDomainName', 'tnd.vn']);

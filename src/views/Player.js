@@ -34,6 +34,7 @@
 		this.cannonMinus.y = game.bottom.y + 36;
 		this.cannonMinus.onEvent = function (e) {
 			if (e.type == game.events[1]) {
+				createjs.Sound.play("change").volume = 0.5;
 				me.cannon.setPower(-1, true);
 			}
 		};
@@ -44,6 +45,7 @@
 		this.cannonPlus.y = this.cannonMinus.y;
 		this.cannonPlus.onEvent = function (e) {
 			if (e.type == game.events[1]) {
+				createjs.Sound.play("change").volume = 0.5;
 				me.cannon.setPower(1, true);
 			}
 		};
@@ -57,6 +59,7 @@
 	};
 
 	Player.prototype.fire = function (targetPoint) {
+		createjs.Sound.play("fire").volume = 0.5;
 		var cannon = this.cannon, power = cannon.power, speed = 7;
 		if (this.coin < power) return;
 
@@ -83,6 +86,7 @@
 	}
 
 	Player.prototype.captureFish = function (fish) {
+		createjs.Sound.play("coins").volume = 0.35;
 		this.updateCoin(fish.coin, true);
 		this.numCapturedFishes++;
 	};

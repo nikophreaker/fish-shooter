@@ -106,6 +106,9 @@
 		imgLoader.addEventListener("loaded", Q.delegate(this.onLoadLoaded, this));
 		imgLoader.addEventListener("complete", Q.delegate(this.onLoadComplete, this));
 		imgLoader.load(ns.R.sources);
+
+		//start load sound
+		loadSound();
 	};
 
 	game.onLoadLoaded = function (e) {
@@ -128,6 +131,8 @@
 	};
 
 	game.startup = function () {
+		var props = new createjs.PlayPropsConfig().set({ interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.5 })
+		createjs.Sound.play("bgm", props);
 		var me = this;
 		this.container.removeChild(this.loader);
 		this.loader = null;
