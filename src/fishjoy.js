@@ -23,6 +23,29 @@
 		fireCount: 0
 	};
 
+	// GET USER DATA FROM API WITH AXIOS
+	async function getUserProfile() {
+		try {
+			let status = await axios.get('/user/profil', {})
+				.then(function (response) {
+					let profileUser = response.data[0];
+					userId = profileUser.id;
+					username = profileUser.name;
+					coinsss = profileUser.user_points.total_point;
+					return true;
+					// console.log(response.data[0]);
+				})
+				.catch(function (error) {
+					console.log(error);
+					return false;
+				})
+			return status;
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	}
+
 	game.load = function (container) {
 
 		var params = this.params = Q.getUrlParams();
@@ -53,7 +76,7 @@
 
 		//load info
 		var div = Q.createDOM("div", {
-			innerHTML: "Đang tải game, vui lòng chờ...<br>", style:
+			innerHTML: "Loading game, please wait...<br>", style:
 			{
 				id: "loader",
 				position: "absolute",
@@ -86,7 +109,7 @@
 	};
 
 	game.onLoadLoaded = function (e) {
-		var content = "Đang tải game, vui lòng chờ...<br>(" + Math.round(e.target.getLoadedSize() / e.target.getTotalSize() * 100) + "%)";
+		var content = "Loading game, please wait...<br>(" + Math.round(e.target.getLoadedSize() / e.target.getTotalSize() * 100) + "%)";
 		this.loader.innerHTML = content;
 	};
 
@@ -97,7 +120,11 @@
 
 	game.init = function (images) {
 		ns.R.init(images);
-		this.startup();
+		getUserProfile().then((res) => {
+			if (res) {
+				this.startup();
+			}
+		});
 	};
 
 	game.startup = function () {
@@ -166,7 +193,8 @@
 	};
 
 	game.initPlayer = function () {
-		var coin = Number(this.params.coin) || 1000;
+		console.log(coinsss);
+		var coin = Number(coinsss) || 1000;
 		this.player = new ns.Player({ id: "quark", coin: coin });
 	};
 

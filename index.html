@@ -79,18 +79,28 @@
     </div>
   </div>
   <div id="fps" style="position:absolute;top:0;left:0;color:#fff;"></div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="text/javascript">
 
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-6184226-21']);
-    _gaq.push(['_setDomainName', 'tnd.vn']);
-    _gaq.push(['_trackPageview']);
+    //GET TOKEN
+    var url = window.location;
+    var coinsss = 0
+    var access_token = new URLSearchParams(url.search).get("access_token");
+    let AUTH_TOKEN = `Bearer ${access_token}`
+    axios.defaults.baseURL = 'https://api.msportsid.com/api';
+    axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+    axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-    (function () {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
+    // var _gaq = _gaq || [];
+    // _gaq.push(['_setAccount', 'UA-6184226-21']);
+    // _gaq.push(['_setDomainName', 'tnd.vn']);
+    // _gaq.push(['_trackPageview']);
+
+    // (function () {
+    //   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    //   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    //   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    // })();
 
   </script>
 </body>
