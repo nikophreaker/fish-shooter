@@ -136,7 +136,7 @@
 	};
 
 	game.startup = function () {
-		var props = new createjs.PlayPropsConfig().set({ interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.5 })
+		var props = new createjs.PlayPropsConfig().set({ interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.75 })
 		createjs.Sound.play("bgm", props);
 		var me = this;
 		this.container.removeChild(this.loader);
