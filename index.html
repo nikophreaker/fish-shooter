@@ -102,13 +102,16 @@
     // SET USER COINS
     async function setCoinsUser() {
       try {
+        console.log(`Coins: ${this.coin}`);
         let status = await axios.post('/game/fishshooter/update', {
           point_after: this.coin
         })
           .then(function (response) {
             if (response.status != undefined) {
+              console.log(true);
               return true;
             } else {
+              console.log(false);
               return false;
             }
           })
