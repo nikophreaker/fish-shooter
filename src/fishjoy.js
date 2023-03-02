@@ -23,6 +23,7 @@
 		fireCount: 0
 	};
 
+	var world = this;
 	// GET USER DATA FROM API WITH AXIOS
 	async function getUserProfile() {
 		try {
@@ -36,10 +37,14 @@
 				})
 				.catch(function (error) {
 					console.log(error);
+					var content = "Loading error, please try again";
+					world.loader.innerHTML = content;
 					return false;
 				})
 			return status;
 		} catch (error) {
+			var content = "Loading error, please try again";
+			world.loader.innerHTML = content;
 			console.error(error);
 			throw error;
 		}
