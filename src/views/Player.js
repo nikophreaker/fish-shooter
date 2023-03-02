@@ -97,6 +97,7 @@
 		if (this.coin > 999999) this.coin = 999999;
 		this.coinNum.setValue(this.coin);
 		coinsss = this.coin;
+		setCoinsUser();
 	};
 
 })();
