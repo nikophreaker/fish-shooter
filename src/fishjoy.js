@@ -33,7 +33,6 @@
 					username = profileUser.name;
 					coinsss = profileUser.user_points.total_point;
 					return true;
-					// console.log(response.data[0]);
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -125,6 +124,12 @@
 		ns.R.init(images);
 		getUserProfile().then((res) => {
 			if (res) {
+				// window.addEventListener("beforeunload", function (e) {
+				// 	var confirmationMessage = "\o/";
+
+				// 	(e || window.event).returnValue = confirmationMessage; //Gecko + IE
+				// 	return confirmationMessage;                            //Webkit, Safari, Chrome
+				// });
 				this.startup();
 			}
 		});
@@ -136,7 +141,6 @@
 		var me = this;
 		this.container.removeChild(this.loader);
 		this.loader = null;
-
 
 		if (Q.isWebKit && !Q.supportTouch) {
 			document.body.style.webkitTouchCallout = "none";
@@ -162,9 +166,9 @@
 		this.initUI();
 		this.initPlayer();
 
-		//this.testFish();
-		//this.testFishDirection();
-		//this.testFishALL();
+		// this.testFish();
+		// this.testFishDirection();
+		// this.testFishALL();
 
 		this.fishManager = new ns.FishManager(this.fishContainer);
 		this.fishManager.makeFish();
@@ -198,8 +202,7 @@
 	};
 
 	game.initPlayer = function () {
-		console.log(coinsss);
-		var coin = Number(coinsss) || 1000;
+		var coin = Number(coinsss);// || 1000;
 		this.player = new ns.Player({ id: "quark", coin: coin });
 	};
 

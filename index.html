@@ -56,6 +56,7 @@
   <title>Fish Shooter</title>
 
   <script type="text/javascript" src="js/quark.base-1.0.0.alpha.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="text/javascript" src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
   <!--<script type="text/javascript" src="fishjoy.game.js"></script>-->
   <script type="text/javascript" src="src/R.js"></script>
@@ -80,7 +81,6 @@
     </div>
   </div>
   <div id="fps" style="position:absolute;top:0;left:0;color:#fff;"></div>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="text/javascript">
 
     //GET TOKEN
@@ -99,6 +99,30 @@
       createjs.Sound.registerSound("audio/coins.ogg", "coins");
     }
 
+    // SET USER COINS
+    async function setCoinsUser() {
+      try {
+        let status = await axios.post('/game/fishshooter/update', {
+          point_after: this.coin
+        })
+          .then(function (response) {
+            if (response.status != undefined) {
+              return true;
+            } else {
+              return false;
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+            return false;
+          })
+        return status;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    }
+
     function mute() {
       createjs.Sound.muted = true;
     }
@@ -106,6 +130,7 @@
     function unmute() {
       createjs.Sound.muted = false;
     }
+
     // var _gaq = _gaq || [];
     // _gaq.push(['_setAccount', 'UA-6184226-21']);
     // _gaq.push(['_setDomainName', 'tnd.vn']);
