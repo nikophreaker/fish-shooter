@@ -1,16 +1,398 @@
-﻿
+﻿// import "./R.js";
+// import "./Utils.js";
+// import "./fishjoy.js";
+// import "./FishManager.js";
+// import "./FishGroup.js";
+// import "./views/Fish.js";
+// import "./views/Cannon.js";
+// import "./views/Bullet.js";
+// import "./views/Num.js";
+// import "./views/Player.js";
+// import {
+// 	initializeApp
+// } from "firebase/app";
+// import {
+// 	getAnalytics
+// } from "firebase/analytics";
+// import {
+// 	getDatabase,
+// 	ref,
+// 	child,
+// 	get
+// } from "firebase/database";
+// import {
+// 	getFirestore,
+// 	query,
+// 	collection,
+// 	doc,
+// 	setDoc,
+// 	getDoc,
+// 	getDocs,
+// 	where,
+// 	orderBy,
+// 	limit,
+// 	updateDoc
+// } from "firebase/firestore";
+
+// // CONFIGURASI FIREBASE
+// const firebaseConfig = {
+// 	apiKey: "AIzaSyBdFMZoNwEWNqCOfUezoSB-TewpOBUfX98",
+// 	authDomain: "mgoalindo---app.firebaseapp.com",
+// 	databaseURL: "https://mgoalindo---app-default-rtdb.firebaseio.com",
+// 	projectId: "mgoalindo---app",
+// 	storageBucket: "mgoalindo---app.appspot.com",
+// 	messagingSenderId: "909481590933",
+// 	appId: "1:909481590933:web:a0626d75765bd850a5db9c",
+// 	measurementId: "G-RLCM7JVYFY"
+// };
+
+// // Initialize Firebase
+// const app = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
+
+// // Initialize Realtime Database and get a reference to the service
+// const database = getDatabase(app);
+
+// // Initialize Firestore Database and get document
+// const db = getFirestore(app);
+// const col = "fishshoot-m88-leaderboard";
+// const colRef = collection(db, col);
+
 (function () {
 
+	let dpr = 2; //window.devicePixelRatio;
 	window.onload = function () {
+		let gameConfig = {
+			type: Phaser.CANVAS,
+			scale: {
+				mode: Phaser.Scale.FIT,
+				autoCenter: Phaser.Scale.CENTER_BOTH,
+				parent: "leaderboard",
+				width: window.innerWidth * dpr,
+				height: window.innerHeight * dpr,
+			},
+			dom: {
+				createContainer: true
+			},
+			transparent: true,
+			backgroundColor: 0x2A3141, //0xD30000,
+			scene: [InputData, Leaderboard]
+		};
+		var games = new Phaser.Game(gameConfig);
+		window.focus();
 		setTimeout(function () {
 			game.load();
+			console.log(game);
 		}, 10);
 	};
 
+	class InputData extends Phaser.Scene {
+		constructor() {
+			super("InputData");
+		}
+
+		init() {
+			window.mobileCheck = function () {
+				let check = false;
+				(function (a) {
+					if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true;
+				})(navigator.userAgent || navigator.vendor || window.opera);
+				return check;
+			};
+			// init canvas size
+			this.gameWidth = this.sys.game.scale.width
+			this.gameHeight = this.sys.game.scale.height
+			this.halfWidth = this.gameWidth / 2;
+			this.halfHeight = this.gameHeight / 2;
+		}
+
+		preload() {
+			this.load.path = "./images/";
+			this.load.image("bgDialog", "fieldvoucher.png");
+			this.load.image("okButton", "okButton.png");
+			this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true);
+		}
+
+		async create() {
+			// this.add.graphics().setDepth(0).fillStyle(0x000000, 0.8).fillRect(0, 0, this.gameWidth, this.gameHeight);
+			var dialogBg = this.add.sprite(this.halfWidth, this.halfHeight, "bgDialog");
+			dialogBg.setScale(0.25 * dpr);
+			this.inputText = this.add.rexInputText(this.halfWidth, this.halfHeight + (25 * dpr), 120 * dpr, 35 * dpr, {
+				// Style properties
+				align: "center",
+				fontSize: `${12 * dpr}px`,
+				color: '#ffffff',
+				border: 0,
+				backgroundColor: 'transparent',
+				borderColor: 'transparent',
+				outline: 'none',
+				direction: 'ltr',
+			});
+
+			this.inputText2 = this.add.rexInputText(this.halfWidth, this.halfHeight + (62 * dpr), 120 * dpr, 35 * dpr, {
+				// Style properties
+				align: "center",
+				fontSize: `${12 * dpr}px`,
+				color: '#ffffff',
+				border: 0,
+				backgroundColor: 'transparent',
+				borderColor: 'transparent',
+				outline: 'none',
+				direction: 'ltr',
+				type: 'number',
+			});
+
+			let inputText = this.inputText;
+			this.inputText.on('textchange', function (inputs, e) {
+				inputText.setText(inputs.text.toString().toUpperCase());
+			}, this);
+
+			let inputText2 = this.inputText2;
+			this.inputText2.on('textchange', function (inputs, e) {
+				inputText2.setText(inputs.text.toString().toUpperCase());
+			}, this);
+
+			let world = this;
+			this.btnOk = this.add.sprite(this.halfWidth, this.halfHeight + (100 * dpr), "okButton");
+			this.btnOk.setScale(0.15 * dpr);
+			this.btnOk.setInteractive();
+			this.btnOk.on("pointerover", function () {});
+			this.btnOk.on("pointerout", function () {});
+			this.btnOk.on("pointerdown", async function () {
+				let txt = inputText.text
+				let txt2 = inputText2.text
+				// GET KODE DATA
+				if (txt != "" && txt != undefined && txt != null) {
+					if (txt2 != "" && txt2 != undefined && txt2 != null) {
+						var username = txt;
+						var notelp = txt2;
+						world.scene.stop("InputData");
+						// world.scene.start("Leaderboard");
+						console.log(username + " " + notelp);
+						// getToBack();
+						setTimeout(function () {
+							document.getElementById("leaderboard").style.zIndex = "-1";
+							game.setBtnLeaderboard();
+							world.scene.start("Leaderboard");
+							console.log(game);
+						}, 10);
+						setTimeout(function () {
+							document.getElementById("banner").style.visibility = "visible";
+						}, 5000);
+					} else {
+						alert("No telp tidak boleh kosong!");
+					}
+				} else {
+					alert("Nama tidak boleh kosong!");
+				}
+			});
+		}
+	}
+
+	class Leaderboard extends Phaser.Scene {
+		constructor() {
+			super("Leaderboard");
+		}
+
+		init(data) {
+			// init canvas size
+			this.gameWidth = this.sys.game.scale.width * 0.25
+			this.gameHeight = this.sys.game.scale.height
+			this.halfWidth = this.gameWidth / 2;
+			this.halfHeight = this.gameHeight / 2;
+			this.userId = data.userId;
+			this.username = data.name;
+		}
+
+		preload() {
+			/*
+			 *Load ASSET
+			 */
+			this.load.path = "./images/";
+			this.load.image("fieldLeaderboard", "field_leaderboard.png");
+		}
+
+		async create() {
+			// this.add.graphics().setDepth(1).fillStyle(0x000000, 0.8).fillRect(0, 0, this.gameWidth, this.gameHeight);
+			this.fieldLeaderboard = this.add.image(this.halfWidth, this.halfHeight, "fieldLeaderboard")
+				.setDepth(2)
+				.setScale(0.25 * dpr)
+				.setOrigin(0.5, 0.5);
+
+			//GET USER DOC
+			let docRef = doc(db, col, String(this.userId));
+			const queryUser = await getDoc(docRef);
+
+			//ADD & UPDATE SCORE USER IN LEADERBOARD 
+			if (queryUser.exists()) {
+				await setDoc(docRef, {
+					name: this.username,
+					score: this.userScore > queryUser.data().score ? this.userScore : queryUser.data().score,
+					date: tglIndonesia(),
+					timestamp: Math.floor(Date.now() / 1000),
+				});
+			} else {
+				await setDoc(docRef, {
+					name: this.username,
+					score: this.userScore,
+					date: tglIndonesia(),
+					timestamp: Math.floor(Date.now() / 1000),
+				});
+			}
+
+			// GET LEADERBOARD DATA (Highest Score)
+			const q = query(colRef, orderBy("score", "desc"), orderBy("timestamp", "asc"), limit(10));
+			const querySnapshot = await getDocs(q);
+			var rowWidth = 0;
+			var rank = 1;
+			var userInHighest = false;
+			querySnapshot.forEach((doc) => {
+				// doc.data() is never undefined for query doc snapshots
+				// console.log(doc.id, " => ", doc.data());
+				let name = doc.data().name.length > 8 ? doc.data().name.substring(0, 11) : doc.data().name;
+				let score = String(doc.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
+				if (this.userId == doc.id) {
+					userInHighest = true;
+					this.add.graphics()
+						.fillStyle(0xF7D013, 0.4)
+						.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
+						.setDepth(2);
+				}
+				this.rank = this.make.text({
+					x: this.halfWidth - (70 * dpr),
+					y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+					text: "0",
+					padding: {
+						left: 5,
+						right: 5,
+						top: 5,
+						bottom: 5
+					},
+					style: {
+						align: "center",
+						fontFamily: "Arial Black",
+						fontSize: 8 * dpr,
+						fill: "#000000"
+					}
+				}).setDepth(2).setOrigin(0.5, 0.5).setText(rank);
+
+				this.name = this.make.text({
+					x: this.halfWidth - (40 * dpr),
+					y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+					text: "0",
+					padding: {
+						left: 5,
+						right: 5,
+						top: 5,
+						bottom: 5
+					},
+					style: {
+						align: "center",
+						fontFamily: "Arial Black",
+						fontSize: 8 * dpr,
+						fill: "#000000"
+					}
+				}).setDepth(2).setOrigin(0, 0.5).setText(name);
+
+				this.score = this.make.text({
+					x: this.halfWidth + (35 * dpr),
+					y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+					text: "0",
+					padding: {
+						left: 5,
+						right: 5,
+						top: 5,
+						bottom: 5
+					},
+					style: {
+						align: "center",
+						fontFamily: "Arial Black",
+						fontSize: 8 * dpr,
+						fill: "#000000"
+					}
+				}).setDepth(2).setOrigin(0, 0.5).setText(score);
+				rowWidth += (8 * dpr);
+				rank++;
+			});
+
+			if (!userInHighest) {
+				//GET USER QUERY AFTER UPDATE (Not in Highest)
+				const queryUser2 = await getDoc(docRef);
+				if (queryUser2.exists()) {
+					let name = queryUser2.data().name.length > 8 ? doc.data().name.substring(0, 11) : queryUser2.data().name;
+					let score = String(queryUser2.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
+					this.add.graphics()
+						.fillStyle(0xF7D013, 0.4)
+						.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
+						.setDepth(2);
+					this.rank = this.make.text({
+						x: this.halfWidth - (70 * dpr),
+						y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+						text: "0",
+						padding: {
+							left: 5,
+							right: 5,
+							top: 5,
+							bottom: 5
+						},
+						style: {
+							align: "center",
+							fontFamily: "Arial Black",
+							fontSize: 8 * dpr,
+							fill: "#000000"
+						}
+					}).setDepth(2).setOrigin(0.5, 0.5).setText(rank);
+
+					this.name = this.make.text({
+						x: this.halfWidth - (40 * dpr),
+						y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+						text: "0",
+						padding: {
+							left: 5,
+							right: 5,
+							top: 5,
+							bottom: 5
+						},
+						style: {
+							align: "center",
+							fontFamily: "Arial Black",
+							fontSize: 8 * dpr,
+							fill: "#000000"
+						}
+					}).setDepth(2).setOrigin(0, 0.5).setText(name);
+
+					this.score = this.make.text({
+						x: this.halfWidth + (35 * dpr),
+						y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+						text: "0",
+						padding: {
+							left: 5,
+							right: 5,
+							top: 5,
+							bottom: 5
+						},
+						style: {
+							align: "center",
+							fontFamily: "Arial Black",
+							fontSize: 8 * dpr,
+							fill: "#000000"
+						}
+					}).setDepth(2).setOrigin(0, 0.5).setText(score);
+				}
+
+			}
+		}
+
+		// update() {
+		//     if (this.currentTicket != undefined && this.currentTicket != null && currentTicket != undefined && currentTicket != null) {
+		//         this.currentTicket.setText(`Your Current Ticket: ${currentTicket}`);
+		//     }
+		// }
+	}
+
 	var ns = Q.use("fish");
 
-	var game = ns.game =
-	{
+	var game = ns.game = {
 		container: null,
 		width: 480,
 		height: 320,
@@ -18,37 +400,10 @@
 		frames: 0,
 		params: null,
 		events: Q.supportTouch ? ["touchstart", "touchend"] : ["mousedown", "mouseup"],
-
 		fireInterval: 20,
-		fireCount: 0
+		fireCount: 0,
+		time: 0
 	};
-
-	var world = this;
-	// GET USER DATA FROM API WITH AXIOS
-	async function getUserProfile() {
-		try {
-			let status = await axios.get('/user/profil', {})
-				.then(function (response) {
-					let profileUser = response.data[0];
-					userId = profileUser.id;
-					username = profileUser.name;
-					coinsss = profileUser.user_points.total_point;
-					return true;
-				})
-				.catch(function (error) {
-					console.log(error);
-					var content = "Loading error, please try again";
-					world.loader.innerHTML = content;
-					return false;
-				})
-			return status;
-		} catch (error) {
-			var content = "Loading error, please try again";
-			world.loader.innerHTML = content;
-			console.error(error);
-			throw error;
-		}
-	}
 
 	game.load = function (container) {
 
@@ -57,14 +412,20 @@
 		if (params.fps) this.fps = params.fps;
 		this.fireInterval = this.fps * 0.15;
 
-		if (Q.isIpod || Q.isIphone) {
-			this.width = 980;
-			this.height = 545;
-			Q.addMeta({ name: "viewport", content: "user-scalable=no" });
+		if (Q.isIpod || Q.isIphone || Q.isAndroid) {
+			this.width = window.innerWidth; //980;
+			this.height = window.innerHeight; //545;
+			Q.addMeta({
+				name: "viewport",
+				content: "user-scalable=no"
+			});
 		} else {
-			Q.addMeta({ name: "viewport", content: "user-scalable=no, initial-scale=1.0, minimum-scale=1, maximum-scale=1" });
-			this.width = Math.min(1024, window.innerWidth);
-			this.height = Math.min(768, window.innerHeight);
+			Q.addMeta({
+				name: "viewport",
+				content: "user-scalable=no, initial-scale=1.0, minimum-scale=1, maximum-scale=1"
+			});
+			this.width = Math.max(1024, window.innerWidth);
+			this.height = Math.max(768, window.innerHeight);
 		}
 
 		if (params.width) this.width = Number(params.width) || this.width;
@@ -80,8 +441,8 @@
 
 		//load info
 		var div = Q.createDOM("div", {
-			innerHTML: "Loading game, please wait...<br>", style:
-			{
+			innerHTML: "Loading game, please wait...<br>",
+			style: {
 				id: "loader",
 				position: "absolute",
 				width: this.width + "px",
@@ -127,21 +488,15 @@
 
 	game.init = function (images) {
 		ns.R.init(images);
-		getUserProfile().then((res) => {
-			if (res) {
-				// window.addEventListener("beforeunload", function (e) {
-				// 	var confirmationMessage = "\o/";
-
-				// 	(e || window.event).returnValue = confirmationMessage; //Gecko + IE
-				// 	return confirmationMessage;                            //Webkit, Safari, Chrome
-				// });
-				this.startup();
-			}
-		});
+		this.startup();
 	};
 
 	game.startup = function () {
-		var props = new createjs.PlayPropsConfig().set({ interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.75 })
+		var props = new createjs.PlayPropsConfig().set({
+			interrupt: createjs.Sound.INTERRUPT_ANY,
+			loop: -1,
+			volume: 0.75
+		})
 		createjs.Sound.play("bgm", props);
 		var me = this;
 		this.container.removeChild(this.loader);
@@ -156,14 +511,30 @@
 
 		var context = null;
 		if (this.params.mode == 1) {
-			var canvas = Q.createDOM("canvas", { id: "canvas", width: this.width, height: this.height, style: { position: "absolute" } });
+			var canvas = Q.createDOM("canvas", {
+				id: "canvas",
+				width: this.width,
+				height: this.height,
+				style: {
+					position: "absolute"
+				}
+			});
 			this.container.appendChild(canvas);
-			this.context = new Q.CanvasContext({ canvas: canvas });
+			this.context = new Q.CanvasContext({
+				canvas: canvas
+			});
 		} else {
-			this.context = new Q.DOMContext({ canvas: this.container });
+			this.context = new Q.DOMContext({
+				canvas: this.container
+			});
 		}
 
-		this.stage = new Q.Stage({ width: this.width, height: this.height, context: this.context, update: Q.delegate(this.update, this) });
+		this.stage = new Q.Stage({
+			width: this.width,
+			height: this.height,
+			context: this.context,
+			update: Q.delegate(this.update, this)
+		});
 
 		var em = this.evtManager = new Q.EventManager();
 		em.registerStage(this.stage, this.events, true, true);
@@ -186,14 +557,49 @@
 		this.showFPS();
 	};
 
-	game.initUI = function () {
-		this.bg = new Q.Bitmap({ id: "bg", image: ns.R.mainbg, transformEnabled: false });
+	game.setBtnLeaderboard = function () {
+		var stat = false
+		document.getElementById("look").addEventListener("click", function () {
+			if (stat) {
+				getToBack()
+				stat = !stat
+			} else {
+				getToFront()
+				stat = !stat
+			}
+		})
 
-		this.fishContainer = new Q.DisplayObjectContainer({ id: "fishContainer", width: this.width, height: this.height, eventChildren: false, transformEnabled: false });
+		function getToBack() {
+			document.getElementById("leaderboard").style.zIndex = "-1";
+		}
+
+		function getToFront() {
+			document.getElementById("leaderboard").style.zIndex = "1";
+		}
+	}
+
+	game.initUI = function () {
+		this.bg = new Q.Bitmap({
+			id: "bg",
+			image: ns.R.mainbg,
+			transformEnabled: false,
+			rect: [0, 0, this.width, this.height],
+		});
+
+		this.fishContainer = new Q.DisplayObjectContainer({
+			id: "fishContainer",
+			width: this.width,
+			height: this.height,
+			eventChildren: false,
+			transformEnabled: false
+		});
 		this.fishContainer.onEvent = function (e) {
 			if (e.type == game.events[0] && game.fireCount >= game.fireInterval) {
 				game.fireCount = 0;
-				game.player.fire({ x: e.eventX, y: e.eventY });
+				game.player.fire({
+					x: e.eventX,
+					y: e.eventY
+				});
 			}
 		};
 
@@ -207,8 +613,11 @@
 	};
 
 	game.initPlayer = function () {
-		var coin = Number(coinsss);// || 1000;
-		this.player = new ns.Player({ id: "quark", coin: coin });
+		var coin = 1000; //Number(coinsss) || 1000;
+		this.player = new ns.Player({
+			id: "quark",
+			coin: coin
+		});
 	};
 
 	game.update = function (timeInfo) {
@@ -218,7 +627,8 @@
 	};
 
 	game.testFish = function () {
-		var num = this.params.num || 50, len = ns.R.fishTypes.length;
+		var num = this.params.num || 50,
+			len = ns.R.fishTypes.length;
 		for (var i = 0; i < num; i++) {
 			var chance = Math.random() * (len - 1) >> 0;
 			var index = Math.random() * chance + 1 >> 0;
@@ -249,7 +659,10 @@
 	};
 
 	game.testFishALL = function () {
-		var sx = 100, sy = 50, y = 0, len = ns.R.fishTypes.length;
+		var sx = 100,
+			sy = 50,
+			y = 0,
+			len = ns.R.fishTypes.length;
 		for (var i = 0; i < len - 1; i++) {
 			var type = ns.R.fishTypes[i + 1];
 			var fish = new ns.Fish(type);
@@ -259,13 +672,14 @@
 			else if (i % 5 == 0) y = sy;
 			fish.y = y + (i % 5) * 20;
 			y += fish.height;
-			fish.update = function () { };
+			fish.update = function () {};
 			this.stage.addChild(fish);
 		}
 	};
 
 	game.showFPS = function () {
-		var me = this, fpsContainer = Quark.getDOM("fps");
+		var me = this,
+			fpsContainer = Quark.getDOM("fps");
 		if (fpsContainer) {
 			setInterval(function () {
 				fpsContainer.innerHTML = "FPS:" + me.frames;

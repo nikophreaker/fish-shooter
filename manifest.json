@@ -1,0 +1,41 @@
+{
+    "short_name": "Fish Shoot",
+    "name": "Fish Shooter",
+    "icons": [{
+            "src": "./images/icon.png",
+            "type": "image/png",
+            "sizes": "184x184"
+        },
+        {
+            "src": "./images/icon.png",
+            "type": "image/png",
+            "sizes": "184x184"
+        },
+        {
+            "src": "./images/icon.png",
+            "type": "image/png",
+            "sizes": "184x184"
+        }
+    ],
+    "id": "/?source=pwa",
+    "start_url": "/?source=pwa",
+    "background_color": "#3367D6",
+    "display": "fullscreen",
+    "orientation": "landscape",
+    "scope": "/",
+    "theme_color": "#3367D6",
+    "description": "Play this game for free",
+    "screenshots": [{
+            "src": "./images/icon.png",
+            "type": "image/png",
+            "sizes": "184x184",
+            "form_factor": "narrow"
+        },
+        {
+            "src": "./images/icon.png",
+            "type": "image/jpg",
+            "sizes": "184x184",
+            "form_factor": "wide"
+        }
+    ]
+}

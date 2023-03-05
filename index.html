@@ -7,6 +7,9 @@
   <link rel="apple-touch-icon" href="images/icon.png" />
   <link rel="apple-touch-startup-image" href="images/icon.png" />
 
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="images/icon.png">
   <style type="text/css">
     body,
     div,
@@ -26,6 +29,16 @@
     body,
     html {
       height: 100%;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    /* Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
     }
 
     #outer {
@@ -51,10 +64,54 @@
       vertical-align: middle;
       position: static;
     }
+    
+    #full {
+      position: absolute;
+      width: 2%;
+      height: 4%;
+      right: 0;
+      top: 0;
+      margin: 10px;
+      z-index: 2;
+    }
+    
+    #music {
+      position: absolute;
+      width: 2%;
+      height: 4%;
+      top: 0;
+      right: 5%;
+      /* -webkit-transform: translateX(-80%);
+      transform: translateX(-80%); */
+      margin: 10px;
+      z-index: 2;
+    }
+
+    #look {
+      font-size: medium;
+      position: absolute;
+      top: 0;
+      /* left: 70%; */
+      z-index: 2;
+      color: rgb(226, 26, 26);
+      outline: auto;
+    }
+    
+    #banner {
+      position: absolute;
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%);
+      max-width: fit-content;
+      visibility: hidden;
+      /* transform: translate(-50%, -50%); */
+      z-index: 1;
+    }
   </style>
 
   <title>Fish Shooter</title>
 
+  <script type="text/javascript"  src="js/phaser.js"></script>
   <script type="text/javascript" src="js/quark.base-1.0.0.alpha.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="text/javascript" src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
@@ -69,65 +126,91 @@
   <script type="text/javascript" src="src/views/Bullet.js"></script>
   <script type="text/javascript" src="src/views/Num.js"></script>
   <script type="text/javascript" src="src/views/Player.js"></script>
+  <!-- <script type="text/javascript" src="dist/bundle.js"></script> -->
 
 </head>
 
 <body>
-
   <div id="outer">
     <div id="middle">
       <div id="container" style="position:relative;top:0%;margin:0 auto;"></div>
+      <div id="leaderboard" style="position:absolute;top:0%;margin:0 auto;z-index: 2;"></div>
+      <p id="look">LEADERBOARD</p>
+      <img id="full" src="./images/max.png" onclick="toggleFullscreen()">
+      <img id="music" src="./images/max.png" onclick="toggleSFX()">
       <div id="msg"></div>
     </div>
+    <a href="google.com" id="banner" target="_blank">
+      <img src="./images/example_banner.png" style="max-width: 100%;width: 250px;">
+    </a>  
   </div>
   <div id="fps" style="position:absolute;top:0;left:0;color:#fff;"></div>
   <script type="text/javascript">
 
-    //GET TOKEN
-    var url = window.location;
-    var coinsss = 0
-    var access_token = new URLSearchParams(url.search).get("access_token");
-    let AUTH_TOKEN = `Bearer ${access_token}`
-    axios.defaults.baseURL = 'https://api.msportsid.com/api';
-    axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-    axios.defaults.headers.post['Content-Type'] = 'application/json';
+    /* Get the element you want displayed in fullscreen mode (a video in this example): */
+    var elem = document.documentElement;
+    var fullImg = document.getElementById("full");
+    var fulled = false;
 
-    function loadSound() {
-      createjs.Sound.registerSound("audio/fire.ogg", "fire");
-      createjs.Sound.registerSound("audio/change.ogg", "change");
-      createjs.Sound.registerSound("audio/bgsound.ogg", "bgm");
-      createjs.Sound.registerSound("audio/coins.ogg", "coins");
+    function toggleFullscreen() {
+      if (fulled) {
+        fullImg.src = "./images/mini.png";
+        openFullscreen()
+        fulled = !fulled
+      } else {
+        fullImg.src = "./images/max.png";
+        closeFullscreen()
+        fulled = !fulled
+      }
     }
-
-    // SET USER COINS
-    async function setCoinsUser() {
-      try {
-        console.log(`Coins: ${coinsss}`);
-        let status = await axios.post('/game/fishshooter/update', {
-          point_after: coinsss
-        })
-          .then(function (response) {
-            if (response.status != undefined) {
-              console.log(true);
-              return true;
-            } else {
-              console.log(false);
-              return false;
-            }
-          })
-          .catch(function (error) {
-            console.log(error);
-            return false;
-          })
-        return status;
-      } catch (error) {
-        console.error(error);
-        throw error;
+    /* View in fullscreen */
+    function openFullscreen() {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
       }
     }
 
+    /* Close fullscreen */
+    function closeFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) { /* Safari */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { /* IE11 */
+        document.msExitFullscreen();
+      }
+    }
+
+    var muted = false;
+    function loadSound() {
+      createjs.Sound.registerSound("audio/fire.ogg", "fire",2);
+      createjs.Sound.registerSound("audio/change.ogg", "change",2);
+      createjs.Sound.registerSound("audio/bgsound.ogg", "bgm",1);
+      createjs.Sound.registerSound("audio/coins.ogg", "coins",2);
+    }
+
+    function toggleSFX() {
+      if (muted) {
+        mute()
+        muted = !muted
+      } else {
+        unmute()
+        muted = !muted
+      }
+    }
+
+    function toggleBGM() {
+      
+    }
+
     function mute() {
+      console.log(createjs);
       createjs.Sound.muted = true;
+      console.log(createjs.Sound);
     }
 
     function unmute() {

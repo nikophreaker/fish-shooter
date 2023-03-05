@@ -1,7 +1,7 @@
-
 (function () {
 
-	var ns = Q.use("fish"), game = ns.game;
+	var ns = Q.use("fish"),
+		game = ns.game;
 
 	var Player = ns.Player = function (props) {
 		this.id = null;
@@ -20,7 +20,8 @@
 	};
 
 	Player.prototype.init = function () {
-		var me = this, power = 1;
+		var me = this,
+			power = 1;
 
 		this.cannon = new ns.Cannon(ns.R.cannonTypes[power]);
 		this.cannon.id = "cannon";
@@ -50,7 +51,13 @@
 			}
 		};
 
-		this.coinNum = new ns.Num({ id: "coinNum", src: ns.R.numBlack, max: 6, gap: 3, autoAddZero: true });
+		this.coinNum = new ns.Num({
+			id: "coinNum",
+			src: ns.R.numBlack,
+			max: 6,
+			gap: 3,
+			autoAddZero: true
+		});
 		this.coinNum.x = game.bottom.x + 20;
 		this.coinNum.y = game.bottom.y + 44;
 		this.updateCoin(this.coin);
@@ -60,18 +67,22 @@
 
 	Player.prototype.fire = function (targetPoint) {
 		createjs.Sound.play("fire").volume = 0.5;
-		var cannon = this.cannon, power = cannon.power, speed = 7;
+		var cannon = this.cannon,
+			power = cannon.power,
+			speed = 7;
 		if (this.coin < power) return;
 
 		//cannon fire
-		var dir = ns.Utils.calcDirection(cannon, targetPoint), degree = dir.degree;
+		var dir = ns.Utils.calcDirection(cannon, targetPoint),
+			degree = dir.degree;
 		if (degree == -90) degree = 0;
 		else if (degree < 0 && degree > -90) degree = -degree;
 		else if (degree >= 180 && degree <= 270) degree = 180 - degree;
 		cannon.fire(degree);
 
 		//fire a bullet
-		var sin = Math.sin(degree * Q.DEG_TO_RAD), cos = Math.cos(degree * Q.DEG_TO_RAD);
+		var sin = Math.sin(degree * Q.DEG_TO_RAD),
+			cos = Math.cos(degree * Q.DEG_TO_RAD);
 		var bullet = new ns.Bullet(ns.R.bullets[power - 1]);
 		bullet.x = cannon.x + (cannon.regY + 20) * sin;
 		bullet.y = cannon.y - (cannon.regY + 20) * cos;
@@ -96,8 +107,6 @@
 		else this.coin = coin;
 		if (this.coin > 999999) this.coin = 999999;
 		this.coinNum.setValue(this.coin);
-		coinsss = this.coin;
-		setCoinsUser();
 	};
 
 })();
