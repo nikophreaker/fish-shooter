@@ -8,58 +8,66 @@
 // import "./views/Bullet.js";
 // import "./views/Num.js";
 // import "./views/Player.js";
-// import {
-// 	initializeApp
-// } from "firebase/app";
-// import {
-// 	getAnalytics
-// } from "firebase/analytics";
-// import {
-// 	getDatabase,
-// 	ref,
-// 	child,
-// 	get
-// } from "firebase/database";
-// import {
-// 	getFirestore,
-// 	query,
-// 	collection,
-// 	doc,
-// 	setDoc,
-// 	getDoc,
-// 	getDocs,
-// 	where,
-// 	orderBy,
-// 	limit,
-// 	updateDoc
-// } from "firebase/firestore";
+import {
+	initializeApp
+} from "firebase/app";
+import {
+	getAnalytics
+} from "firebase/analytics";
+import {
+	getDatabase,
+	ref,
+	child,
+	get
+} from "firebase/database";
+import {
+	getFirestore,
+	query,
+	collection,
+	doc,
+	setDoc,
+	getDoc,
+	getDocs,
+	where,
+	orderBy,
+	limit,
+	updateDoc,
+	onSnapshot
+} from "firebase/firestore";
 
-// // CONFIGURASI FIREBASE
-// const firebaseConfig = {
-// 	apiKey: "AIzaSyBdFMZoNwEWNqCOfUezoSB-TewpOBUfX98",
-// 	authDomain: "mgoalindo---app.firebaseapp.com",
-// 	databaseURL: "https://mgoalindo---app-default-rtdb.firebaseio.com",
-// 	projectId: "mgoalindo---app",
-// 	storageBucket: "mgoalindo---app.appspot.com",
-// 	messagingSenderId: "909481590933",
-// 	appId: "1:909481590933:web:a0626d75765bd850a5db9c",
-// 	measurementId: "G-RLCM7JVYFY"
-// };
+// CONFIGURASI FIREBASE
+const firebaseConfig = {
+	apiKey: "AIzaSyBdFMZoNwEWNqCOfUezoSB-TewpOBUfX98",
+	authDomain: "mgoalindo---app.firebaseapp.com",
+	databaseURL: "https://mgoalindo---app-default-rtdb.firebaseio.com",
+	projectId: "mgoalindo---app",
+	storageBucket: "mgoalindo---app.appspot.com",
+	messagingSenderId: "909481590933",
+	appId: "1:909481590933:web:a0626d75765bd850a5db9c",
+	measurementId: "G-RLCM7JVYFY"
+};
 
-// // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
-// // Initialize Realtime Database and get a reference to the service
-// const database = getDatabase(app);
+// Initialize Realtime Database and get a reference to the service
+const database = getDatabase(app);
 
-// // Initialize Firestore Database and get document
-// const db = getFirestore(app);
-// const col = "fishshoot-m88-leaderboard";
-// const colRef = collection(db, col);
+// Initialize Firestore Database and get document
+const db = getFirestore(app);
+const col = "fishshoot-m88-leaderboard";
+const colRef = collection(db, col);
+
+var name, telp;
+export async function updateScore(newScore) {
+	let playerRef = doc(db, col, String(telp));
+	return await updateDoc(playerRef, {
+		score: newScore
+	  });
+}
 
 (function () {
-
 	let dpr = 2; //window.devicePixelRatio;
 	window.onload = function () {
 		let gameConfig = {
@@ -82,7 +90,6 @@
 		window.focus();
 		setTimeout(function () {
 			game.load();
-			console.log(game);
 		}, 10);
 	};
 
@@ -164,21 +171,36 @@
 				// GET KODE DATA
 				if (txt != "" && txt != undefined && txt != null) {
 					if (txt2 != "" && txt2 != undefined && txt2 != null) {
-						var username = txt;
-						var notelp = txt2;
-						world.scene.stop("InputData");
+						var username = name = txt;
+						var notelp = telp = txt2;
 						// world.scene.start("Leaderboard");
-						console.log(username + " " + notelp);
-						// getToBack();
-						setTimeout(function () {
-							document.getElementById("leaderboard").style.zIndex = "-1";
-							game.setBtnLeaderboard();
-							world.scene.start("Leaderboard");
-							console.log(game);
-						}, 10);
-						setTimeout(function () {
-							document.getElementById("banner").style.visibility = "visible";
-						}, 5000);
+						// console.log(username + " " + notelp);
+
+						//GET USER DOC
+						let docRef = doc(db, col, String(notelp));
+						let q = query(colRef, where("notelp", "==", String(notelp)));
+						let data = await getDocs(q);
+						if (data.size == 0 ) {
+							world.scene.stop("InputData");
+							await setDoc(docRef, {
+								name: username,
+								notelp: notelp,
+								score: 1000,
+								date: tglIndonesia(),
+								timestamp: Math.floor(Date.now() / 1000),
+							}).then(()=>{
+								setTimeout(function () {
+									document.getElementById("leaderboard").style.zIndex = "-1";
+									game.setBtnLeaderboard();
+									world.scene.start("Leaderboard", {opened: true});
+								}, 10);
+								setTimeout(function () {
+									document.getElementById("banner").style.visibility = "visible";
+								}, 5000);
+							});
+						} else {
+							alert(`Nomor ${notelp} sudah terdaftar`);
+						}
 					} else {
 						alert("No telp tidak boleh kosong!");
 					}
@@ -202,6 +224,7 @@
 			this.halfHeight = this.gameHeight / 2;
 			this.userId = data.userId;
 			this.username = data.name;
+			this.opened = data.opened;
 		}
 
 		preload() {
@@ -223,108 +246,41 @@
 			let docRef = doc(db, col, String(this.userId));
 			const queryUser = await getDoc(docRef);
 
-			//ADD & UPDATE SCORE USER IN LEADERBOARD 
-			if (queryUser.exists()) {
-				await setDoc(docRef, {
-					name: this.username,
-					score: this.userScore > queryUser.data().score ? this.userScore : queryUser.data().score,
-					date: tglIndonesia(),
-					timestamp: Math.floor(Date.now() / 1000),
-				});
-			} else {
-				await setDoc(docRef, {
-					name: this.username,
-					score: this.userScore,
-					date: tglIndonesia(),
-					timestamp: Math.floor(Date.now() / 1000),
-				});
-			}
-
 			// GET LEADERBOARD DATA (Highest Score)
-			const q = query(colRef, orderBy("score", "desc"), orderBy("timestamp", "asc"), limit(10));
-			const querySnapshot = await getDocs(q);
 			var rowWidth = 0;
 			var rank = 1;
 			var userInHighest = false;
-			querySnapshot.forEach((doc) => {
-				// doc.data() is never undefined for query doc snapshots
-				// console.log(doc.id, " => ", doc.data());
-				let name = doc.data().name.length > 8 ? doc.data().name.substring(0, 11) : doc.data().name;
-				let score = String(doc.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
-				if (this.userId == doc.id) {
-					userInHighest = true;
-					this.add.graphics()
-						.fillStyle(0xF7D013, 0.4)
-						.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
-						.setDepth(2);
-				}
-				this.rank = this.make.text({
-					x: this.halfWidth - (70 * dpr),
-					y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
-					text: "0",
-					padding: {
-						left: 5,
-						right: 5,
-						top: 5,
-						bottom: 5
-					},
-					style: {
-						align: "center",
-						fontFamily: "Arial Black",
-						fontSize: 8 * dpr,
-						fill: "#000000"
+			var arr = [];
+			console.log(game);
+			// console.log(game.Player.coin);
+			const q = query(colRef, orderBy("score", "desc"), orderBy("timestamp", "asc"), limit(10));
+			const q2 = query(colRef, where("notelp", "==", String(telp)));
+			const unsubs = onSnapshot(q, (snapshot) => {
+				snapshot.docChanges().forEach((change) => {
+					if (change.type == "added") {
 					}
-				}).setDepth(2).setOrigin(0.5, 0.5).setText(rank);
-
-				this.name = this.make.text({
-					x: this.halfWidth - (40 * dpr),
-					y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
-					text: "0",
-					padding: {
-						left: 5,
-						right: 5,
-						top: 5,
-						bottom: 5
-					},
-					style: {
-						align: "center",
-						fontFamily: "Arial Black",
-						fontSize: 8 * dpr,
-						fill: "#000000"
+					if (change.type == "modified") {
+						// arr.forEach((value)=> {
+						// 	value.name.destroy();
+						// 	value.rank.destroy();
+						// 	value.score.destroy();
+						// 	rowWidth = 0;
+						// })
+						// arr.filter((value)=> value == telp);
 					}
-				}).setDepth(2).setOrigin(0, 0.5).setText(name);
+					if (change.type == "removed") {
 
-				this.score = this.make.text({
-					x: this.halfWidth + (35 * dpr),
-					y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
-					text: "0",
-					padding: {
-						left: 5,
-						right: 5,
-						top: 5,
-						bottom: 5
-					},
-					style: {
-						align: "center",
-						fontFamily: "Arial Black",
-						fontSize: 8 * dpr,
-						fill: "#000000"
 					}
-				}).setDepth(2).setOrigin(0, 0.5).setText(score);
-				rowWidth += (8 * dpr);
-				rank++;
-			});
-
-			if (!userInHighest) {
-				//GET USER QUERY AFTER UPDATE (Not in Highest)
-				const queryUser2 = await getDoc(docRef);
-				if (queryUser2.exists()) {
-					let name = queryUser2.data().name.length > 8 ? doc.data().name.substring(0, 11) : queryUser2.data().name;
-					let score = String(queryUser2.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
-					this.add.graphics()
-						.fillStyle(0xF7D013, 0.4)
-						.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
-						.setDepth(2);
+					let name = change.doc.data().name.length > 8 ? change.doc.data().name.substring(0, 11) : change.doc.data().name;
+					let score = String(change.doc.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
+					let notelp = change.doc.data().notelp;
+					if (telp == change.doc.id) {
+						userInHighest = true;
+						this.add.graphics()
+							.fillStyle(0xF7D013, 0.4)
+							.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
+							.setDepth(2);
+					}
 					this.rank = this.make.text({
 						x: this.halfWidth - (70 * dpr),
 						y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
@@ -378,9 +334,229 @@
 							fill: "#000000"
 						}
 					}).setDepth(2).setOrigin(0, 0.5).setText(score);
-				}
+					rowWidth += (8 * dpr);
+					rank++;
+					arr.push(
+						{
+							notelp: notelp,
+							name: this.name,
+							rank: this.rank,
+							score: this.score
+						}
+					);
+				});
+			})
+			console.log(arr);
 
-			}
+			// if (!userInHighest) {
+			// 	//GET USER QUERY AFTER UPDATE (Not in Highest)
+			// 	const unsubs = onSnapshot(q2, (snapshot) => {
+			// 		snapshot.docChanges().forEach((change) => {
+			// 			let name = change.doc.data().name.length > 8 ? change.doc.data().name.substring(0, 11) : change.doc.data().name;
+			// 			let score = String(change.doc.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
+			// 			this.add.graphics()
+			// 				.fillStyle(0xF7D013, 0.4)
+			// 				.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
+			// 				.setDepth(2);
+			// 			this.rank = this.make.text({
+			// 				x: this.halfWidth - (70 * dpr),
+			// 				y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+			// 				text: "0",
+			// 				padding: {
+			// 					left: 5,
+			// 					right: 5,
+			// 					top: 5,
+			// 					bottom: 5
+			// 				},
+			// 				style: {
+			// 					align: "center",
+			// 					fontFamily: "Arial Black",
+			// 					fontSize: 8 * dpr,
+			// 					fill: "#000000"
+			// 				}
+			// 			}).setDepth(2).setOrigin(0.5, 0.5).setText(rank);
+	
+			// 			this.name = this.make.text({
+			// 				x: this.halfWidth - (40 * dpr),
+			// 				y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+			// 				text: "0",
+			// 				padding: {
+			// 					left: 5,
+			// 					right: 5,
+			// 					top: 5,
+			// 					bottom: 5
+			// 				},
+			// 				style: {
+			// 					align: "center",
+			// 					fontFamily: "Arial Black",
+			// 					fontSize: 8 * dpr,
+			// 					fill: "#000000"
+			// 				}
+			// 			}).setDepth(2).setOrigin(0, 0.5).setText(name);
+	
+			// 			this.score = this.make.text({
+			// 				x: this.halfWidth + (35 * dpr),
+			// 				y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+			// 				text: "0",
+			// 				padding: {
+			// 					left: 5,
+			// 					right: 5,
+			// 					top: 5,
+			// 					bottom: 5
+			// 				},
+			// 				style: {
+			// 					align: "center",
+			// 					fontFamily: "Arial Black",
+			// 					fontSize: 8 * dpr,
+			// 					fill: "#000000"
+			// 				}
+			// 			}).setDepth(2).setOrigin(0, 0.5).setText(score);
+			// 		});
+			// 	});
+			// }
+
+			// var world = this;
+			// this.events.on("stop", (scene, data) => {
+			// 	world.opened = data.opened;
+			// 	document.getElementById("look").addEventListener("click", function () {
+			// 		if (world.opened) {
+			// 			world.scene.remove("Leaderboard");
+			// 		}
+			// 	});
+			// });
+			// console.log(this.opened);
+
+			// const querySnapshot = await getDocs(q);
+			// querySnapshot.forEach((doc) => {
+    		// 	let name = doc.data().name.length > 8 ? doc.data().name.substring(0, 11) : doc.data().name;
+			// 	let score = String(doc.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
+			// 	if (telp == doc.id) {
+			// 		userInHighest = true;
+			// 		this.add.graphics()
+			// 			.fillStyle(0xF7D013, 0.4)
+			// 			.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
+			// 			.setDepth(2);
+			// 	}
+			// 	this.rank = this.make.text({
+			// 		x: this.halfWidth - (70 * dpr),
+			// 		y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+			// 		text: "0",
+			// 		padding: {
+			// 			left: 5,
+			// 			right: 5,
+			// 			top: 5,
+			// 			bottom: 5
+			// 		},
+			// 		style: {
+			// 			align: "center",
+			// 			fontFamily: "Arial Black",
+			// 			fontSize: 8 * dpr,
+			// 			fill: "#000000"
+			// 		}
+			// 	}).setDepth(2).setOrigin(0.5, 0.5).setText(rank);
+			// 	this.name = this.make.text({
+			// 		x: this.halfWidth - (40 * dpr),
+			// 		y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+			// 		text: "0",
+			// 		padding: {
+			// 			left: 5,
+			// 			right: 5,
+			// 			top: 5,
+			// 			bottom: 5
+			// 		},
+			// 		style: {
+			// 			align: "center",
+			// 			fontFamily: "Arial Black",
+			// 			fontSize: 8 * dpr,
+			// 			fill: "#000000"
+			// 		}
+			// 	}).setDepth(2).setOrigin(0, 0.5).setText(name);
+			// 	this.score = this.make.text({
+			// 		x: this.halfWidth + (35 * dpr),
+			// 		y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+			// 		text: "0",
+			// 		padding: {
+			// 			left: 5,
+			// 			right: 5,
+			// 			top: 5,
+			// 			bottom: 5
+			// 		},
+			// 		style: {
+			// 			align: "center",
+			// 			fontFamily: "Arial Black",
+			// 			fontSize: 8 * dpr,
+			// 			fill: "#000000"
+			// 		}
+			// 	}).setDepth(2).setOrigin(0, 0.5).setText(score);
+			// 	rowWidth += (8 * dpr);
+			// 	rank++;
+			// });
+
+			// if (!userInHighest) {
+			// 	//GET USER QUERY AFTER UPDATE (Not in Highest)
+            // 	const queryUser2 = await getDoc(docRef);
+            // 	if (queryUser2.exists()) {
+			// 		let name = doc.data().name.length > 8 ? doc.data().name.substring(0, 11) : doc.data().name;
+			// 		let score = String(doc.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
+			// 		this.add.graphics()
+			// 			.fillStyle(0xF7D013, 0.4)
+			// 			.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
+			// 			.setDepth(2);
+			// 		this.rank = this.make.text({
+			// 			x: this.halfWidth - (70 * dpr),
+			// 			y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+			// 			text: "0",
+			// 			padding: {
+			// 				left: 5,
+			// 				right: 5,
+			// 				top: 5,
+			// 				bottom: 5
+			// 			},
+			// 			style: {
+			// 				align: "center",
+			// 				fontFamily: "Arial Black",
+			// 				fontSize: 8 * dpr,
+			// 				fill: "#000000"
+			// 			}
+			// 		}).setDepth(2).setOrigin(0.5, 0.5).setText(rank);
+				
+			// 		this.name = this.make.text({
+			// 			x: this.halfWidth - (40 * dpr),
+			// 			y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+			// 			text: "0",
+			// 			padding: {
+			// 				left: 5,
+			// 				right: 5,
+			// 				top: 5,
+			// 				bottom: 5
+			// 			},
+			// 			style: {
+			// 				align: "center",
+			// 				fontFamily: "Arial Black",
+			// 				fontSize: 8 * dpr,
+			// 				fill: "#000000"
+			// 			}
+			// 		}).setDepth(2).setOrigin(0, 0.5).setText(name);
+				
+			// 		this.score = this.make.text({
+			// 			x: this.halfWidth + (35 * dpr),
+			// 			y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+			// 			text: "0",
+			// 			padding: {
+			// 				left: 5,
+			// 				right: 5,
+			// 				top: 5,
+			// 				bottom: 5
+			// 			},
+			// 			style: {
+			// 				align: "center",
+			// 				fontFamily: "Arial Black",
+			// 				fontSize: 8 * dpr,
+			// 				fill: "#000000"
+			// 			}
+			// 		}).setDepth(2).setOrigin(0, 0.5).setText(score);
+			// 	}
+			// }
 		}
 
 		// update() {
@@ -692,4 +868,80 @@
 		window.scrollTo(0, 1);
 	};
 
+	function tglIndonesia() {
+		var date = new Date();
+		var tahun = date.getFullYear();
+		var bulan = date.getMonth();
+		var tanggal = date.getDate();
+		var hari = date.getDay();
+		var jam = date.getHours();
+		var menit = date.getMinutes();
+		var detik = date.getSeconds();
+		switch (hari) {
+			case 0:
+				hari = "Minggu";
+				break;
+			case 1:
+				hari = "Senin";
+				break;
+			case 2:
+				hari = "Selasa";
+				break;
+			case 3:
+				hari = "Rabu";
+				break;
+			case 4:
+				hari = "Kamis";
+				break;
+			case 5:
+				hari = "Jum'at";
+				break;
+			case 6:
+				hari = "Sabtu";
+				break;
+		}
+		switch (bulan) {
+			case 0:
+				bulan = "Januari";
+				break;
+			case 1:
+				bulan = "Februari";
+				break;
+			case 2:
+				bulan = "Maret";
+				break;
+			case 3:
+				bulan = "April";
+				break;
+			case 4:
+				bulan = "Mei";
+				break;
+			case 5:
+				bulan = "Juni";
+				break;
+			case 6:
+				bulan = "Juli";
+				break;
+			case 7:
+				bulan = "Agustus";
+				break;
+			case 8:
+				bulan = "September";
+				break;
+			case 9:
+				bulan = "Oktober";
+				break;
+			case 10:
+				bulan = "November";
+				break;
+			case 11:
+				bulan = "Desember";
+				break;
+		}
+		var tampilTanggal = hari + ", " + tanggal + " " + bulan + " " + tahun;
+		var tampilWaktu = jam + ":" + menit + ":" + detik;
+		return tampilTanggal + " " + tampilWaktu
+	}
+
 })();
+

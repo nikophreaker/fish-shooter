@@ -64,7 +64,7 @@
       vertical-align: middle;
       position: static;
     }
-    
+
     #full {
       position: absolute;
       width: 2%;
@@ -74,7 +74,7 @@
       margin: 10px;
       z-index: 2;
     }
-    
+
     #music {
       position: absolute;
       width: 2%;
@@ -96,7 +96,7 @@
       color: rgb(226, 26, 26);
       outline: auto;
     }
-    
+
     #banner {
       position: absolute;
       left: 50%;
@@ -111,12 +111,12 @@
 
   <title>Fish Shooter</title>
 
-  <script type="text/javascript"  src="js/phaser.js"></script>
+  <script type="text/javascript" src="js/phaser.js"></script>
   <script type="text/javascript" src="js/quark.base-1.0.0.alpha.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="text/javascript" src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
   <!--<script type="text/javascript" src="fishjoy.game.js"></script>-->
-  <script type="text/javascript" src="src/R.js"></script>
+  <!-- <script type="text/javascript" src="src/R.js"></script>
   <script type="text/javascript" src="src/Utils.js"></script>
   <script type="text/javascript" src="src/fishjoy.js"></script>
   <script type="text/javascript" src="src/FishManager.js"></script>
@@ -125,8 +125,8 @@
   <script type="text/javascript" src="src/views/Cannon.js"></script>
   <script type="text/javascript" src="src/views/Bullet.js"></script>
   <script type="text/javascript" src="src/views/Num.js"></script>
-  <script type="text/javascript" src="src/views/Player.js"></script>
-  <!-- <script type="text/javascript" src="dist/bundle.js"></script> -->
+  <script type="text/javascript" src="src/views/Player.js"></script> -->
+  <script type="text/javascript" src="dist/bundle.js"></script>
 
 </head>
 
@@ -140,9 +140,9 @@
       <img id="music" src="./images/max.png" onclick="toggleSFX()">
       <div id="msg"></div>
     </div>
-    <a href="google.com" id="banner" target="_blank">
-      <img src="./images/example_banner.png" style="max-width: 100%;width: 250px;">
-    </a>  
+    <a href="https://www.google.com/" id="banner" target="_blank">
+      <img src="./images/mg_m88_candy_rush_wilds_tournament_EN.jpg" style="max-width: 100%;width: 250px;">
+    </a>
   </div>
   <div id="fps" style="position:absolute;top:0;left:0;color:#fff;"></div>
   <script type="text/javascript">
@@ -187,10 +187,10 @@
 
     var muted = false;
     function loadSound() {
-      createjs.Sound.registerSound("audio/fire.ogg", "fire",2);
-      createjs.Sound.registerSound("audio/change.ogg", "change",2);
-      createjs.Sound.registerSound("audio/bgsound.ogg", "bgm",1);
-      createjs.Sound.registerSound("audio/coins.ogg", "coins",2);
+      createjs.Sound.registerSound("audio/fire.ogg", "fire", 2);
+      createjs.Sound.registerSound("audio/change.ogg", "change", 2);
+      createjs.Sound.registerSound("audio/bgsound.ogg", "bgm", 1);
+      createjs.Sound.registerSound("audio/coins.ogg", "coins", 2);
     }
 
     function toggleSFX() {
@@ -204,7 +204,7 @@
     }
 
     function toggleBGM() {
-      
+
     }
 
     function mute() {
