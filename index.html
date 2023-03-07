@@ -77,8 +77,8 @@
 
     #music {
       position: absolute;
-      width: 2%;
-      height: 4%;
+      width: 4%;
+      height: 8%;
       top: 0;
       right: 5%;
       /* -webkit-transform: translateX(-80%);
@@ -137,7 +137,7 @@
       <div id="leaderboard" style="position:absolute;top:0%;margin:0 auto;z-index: 2;"></div>
       <p id="look">LEADERBOARD</p>
       <img id="full" src="./images/max.png" onclick="toggleFullscreen()">
-      <img id="music" src="./images/max.png" onclick="toggleSFX()">
+      <img id="music" src="./images/ic_unmute.png" onclick="toggleSFX()">
       <div id="msg"></div>
     </div>
     <a href="https://www.google.com/" id="banner" target="_blank">
@@ -150,7 +150,9 @@
     /* Get the element you want displayed in fullscreen mode (a video in this example): */
     var elem = document.documentElement;
     var fullImg = document.getElementById("full");
+    var soundImg = document.getElementById("music");
     var fulled = false;
+    var muted = false;
 
     function toggleFullscreen() {
       if (fulled) {
@@ -185,7 +187,6 @@
       }
     }
 
-    var muted = false;
     function loadSound() {
       createjs.Sound.registerSound("audio/fire.ogg", "fire", 2);
       createjs.Sound.registerSound("audio/change.ogg", "change", 2);
@@ -195,9 +196,11 @@
 
     function toggleSFX() {
       if (muted) {
+        soundImg.src = "./images/ic_mute.png";
         mute()
         muted = !muted
       } else {
+        soundImg.src = "./images/ic_unmute.png";
         unmute()
         muted = !muted
       }
@@ -208,9 +211,7 @@
     }
 
     function mute() {
-      console.log(createjs);
       createjs.Sound.muted = true;
-      console.log(createjs.Sound);
     }
 
     function unmute() {

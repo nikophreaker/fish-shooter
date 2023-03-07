@@ -191,8 +191,8 @@ export async function updateScore(newScore) {
 							}).then(()=>{
 								setTimeout(function () {
 									document.getElementById("leaderboard").style.zIndex = "-1";
-									game.setBtnLeaderboard();
-									world.scene.start("Leaderboard", {opened: true});
+									game.setBtnLeaderboard(world);
+									// world.scene.start("MainClass");
 								}, 10);
 								setTimeout(function () {
 									document.getElementById("banner").style.visibility = "visible";
@@ -243,7 +243,7 @@ export async function updateScore(newScore) {
 				.setOrigin(0.5, 0.5);
 
 			//GET USER DOC
-			let docRef = doc(db, col, String(this.userId));
+			let docRef = doc(db, col, String(telp));
 			const queryUser = await getDoc(docRef);
 
 			// GET LEADERBOARD DATA (Highest Score)
@@ -251,36 +251,84 @@ export async function updateScore(newScore) {
 			var rank = 1;
 			var userInHighest = false;
 			var arr = [];
-			console.log(game);
-			// console.log(game.Player.coin);
 			const q = query(colRef, orderBy("score", "desc"), orderBy("timestamp", "asc"), limit(10));
-			const q2 = query(colRef, where("notelp", "==", String(telp)));
-			const unsubs = onSnapshot(q, (snapshot) => {
-				snapshot.docChanges().forEach((change) => {
-					if (change.type == "added") {
-					}
-					if (change.type == "modified") {
-						// arr.forEach((value)=> {
-						// 	value.name.destroy();
-						// 	value.rank.destroy();
-						// 	value.score.destroy();
-						// 	rowWidth = 0;
-						// })
-						// arr.filter((value)=> value == telp);
-					}
-					if (change.type == "removed") {
 
+			const querySnapshot = await getDocs(q);
+			querySnapshot.forEach((doc) => {
+    			let name = doc.data().name.length > 8 ? doc.data().name.substring(0, 11) : doc.data().name;
+				let score = String(doc.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
+				if (telp == doc.id) {
+					userInHighest = true;
+					this.add.graphics()
+						.fillStyle(0xF7D013, 0.4)
+						.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
+						.setDepth(2);
+				}
+				this.rank = this.make.text({
+					x: this.halfWidth - (70 * dpr),
+					y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+					text: "0",
+					padding: {
+						left: 5,
+						right: 5,
+						top: 5,
+						bottom: 5
+					},
+					style: {
+						align: "center",
+						fontFamily: "Arial Black",
+						fontSize: 8 * dpr,
+						fill: "#000000"
 					}
-					let name = change.doc.data().name.length > 8 ? change.doc.data().name.substring(0, 11) : change.doc.data().name;
-					let score = String(change.doc.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
-					let notelp = change.doc.data().notelp;
-					if (telp == change.doc.id) {
-						userInHighest = true;
-						this.add.graphics()
-							.fillStyle(0xF7D013, 0.4)
-							.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
-							.setDepth(2);
+				}).setDepth(2).setOrigin(0.5, 0.5).setText(rank);
+				this.name = this.make.text({
+					x: this.halfWidth - (40 * dpr),
+					y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+					text: "0",
+					padding: {
+						left: 5,
+						right: 5,
+						top: 5,
+						bottom: 5
+					},
+					style: {
+						align: "center",
+						fontFamily: "Arial Black",
+						fontSize: 8 * dpr,
+						fill: "#000000"
 					}
+				}).setDepth(2).setOrigin(0, 0.5).setText(name);
+				this.score = this.make.text({
+					x: this.halfWidth + (35 * dpr),
+					y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+					text: "0",
+					padding: {
+						left: 5,
+						right: 5,
+						top: 5,
+						bottom: 5
+					},
+					style: {
+						align: "center",
+						fontFamily: "Arial Black",
+						fontSize: 8 * dpr,
+						fill: "#000000"
+					}
+				}).setDepth(2).setOrigin(0, 0.5).setText(score);
+				rowWidth += (8 * dpr);
+				rank++;
+			});
+
+			if (!userInHighest) {
+				//GET USER QUERY AFTER UPDATE (Not in Highest)
+            	const queryUser2 = await getDoc(docRef);
+            	if (queryUser2.exists()) {
+					let name = queryUser2.data().name.length > 8 ? queryUser2.data().name.substring(0, 11) : queryUser2.data().name;
+					let score = String(queryUser2.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
+					this.add.graphics()
+						.fillStyle(0xF7D013, 0.4)
+						.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
+						.setDepth(2);
 					this.rank = this.make.text({
 						x: this.halfWidth - (70 * dpr),
 						y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
@@ -298,7 +346,7 @@ export async function updateScore(newScore) {
 							fill: "#000000"
 						}
 					}).setDepth(2).setOrigin(0.5, 0.5).setText(rank);
-
+				
 					this.name = this.make.text({
 						x: this.halfWidth - (40 * dpr),
 						y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
@@ -316,7 +364,7 @@ export async function updateScore(newScore) {
 							fill: "#000000"
 						}
 					}).setDepth(2).setOrigin(0, 0.5).setText(name);
-
+				
 					this.score = this.make.text({
 						x: this.halfWidth + (35 * dpr),
 						y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
@@ -334,236 +382,9 @@ export async function updateScore(newScore) {
 							fill: "#000000"
 						}
 					}).setDepth(2).setOrigin(0, 0.5).setText(score);
-					rowWidth += (8 * dpr);
-					rank++;
-					arr.push(
-						{
-							notelp: notelp,
-							name: this.name,
-							rank: this.rank,
-							score: this.score
-						}
-					);
-				});
-			})
-			console.log(arr);
-
-			// if (!userInHighest) {
-			// 	//GET USER QUERY AFTER UPDATE (Not in Highest)
-			// 	const unsubs = onSnapshot(q2, (snapshot) => {
-			// 		snapshot.docChanges().forEach((change) => {
-			// 			let name = change.doc.data().name.length > 8 ? change.doc.data().name.substring(0, 11) : change.doc.data().name;
-			// 			let score = String(change.doc.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
-			// 			this.add.graphics()
-			// 				.fillStyle(0xF7D013, 0.4)
-			// 				.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
-			// 				.setDepth(2);
-			// 			this.rank = this.make.text({
-			// 				x: this.halfWidth - (70 * dpr),
-			// 				y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
-			// 				text: "0",
-			// 				padding: {
-			// 					left: 5,
-			// 					right: 5,
-			// 					top: 5,
-			// 					bottom: 5
-			// 				},
-			// 				style: {
-			// 					align: "center",
-			// 					fontFamily: "Arial Black",
-			// 					fontSize: 8 * dpr,
-			// 					fill: "#000000"
-			// 				}
-			// 			}).setDepth(2).setOrigin(0.5, 0.5).setText(rank);
-	
-			// 			this.name = this.make.text({
-			// 				x: this.halfWidth - (40 * dpr),
-			// 				y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
-			// 				text: "0",
-			// 				padding: {
-			// 					left: 5,
-			// 					right: 5,
-			// 					top: 5,
-			// 					bottom: 5
-			// 				},
-			// 				style: {
-			// 					align: "center",
-			// 					fontFamily: "Arial Black",
-			// 					fontSize: 8 * dpr,
-			// 					fill: "#000000"
-			// 				}
-			// 			}).setDepth(2).setOrigin(0, 0.5).setText(name);
-	
-			// 			this.score = this.make.text({
-			// 				x: this.halfWidth + (35 * dpr),
-			// 				y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
-			// 				text: "0",
-			// 				padding: {
-			// 					left: 5,
-			// 					right: 5,
-			// 					top: 5,
-			// 					bottom: 5
-			// 				},
-			// 				style: {
-			// 					align: "center",
-			// 					fontFamily: "Arial Black",
-			// 					fontSize: 8 * dpr,
-			// 					fill: "#000000"
-			// 				}
-			// 			}).setDepth(2).setOrigin(0, 0.5).setText(score);
-			// 		});
-			// 	});
-			// }
-
-			// var world = this;
-			// this.events.on("stop", (scene, data) => {
-			// 	world.opened = data.opened;
-			// 	document.getElementById("look").addEventListener("click", function () {
-			// 		if (world.opened) {
-			// 			world.scene.remove("Leaderboard");
-			// 		}
-			// 	});
-			// });
-			// console.log(this.opened);
-
-			// const querySnapshot = await getDocs(q);
-			// querySnapshot.forEach((doc) => {
-    		// 	let name = doc.data().name.length > 8 ? doc.data().name.substring(0, 11) : doc.data().name;
-			// 	let score = String(doc.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
-			// 	if (telp == doc.id) {
-			// 		userInHighest = true;
-			// 		this.add.graphics()
-			// 			.fillStyle(0xF7D013, 0.4)
-			// 			.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
-			// 			.setDepth(2);
-			// 	}
-			// 	this.rank = this.make.text({
-			// 		x: this.halfWidth - (70 * dpr),
-			// 		y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
-			// 		text: "0",
-			// 		padding: {
-			// 			left: 5,
-			// 			right: 5,
-			// 			top: 5,
-			// 			bottom: 5
-			// 		},
-			// 		style: {
-			// 			align: "center",
-			// 			fontFamily: "Arial Black",
-			// 			fontSize: 8 * dpr,
-			// 			fill: "#000000"
-			// 		}
-			// 	}).setDepth(2).setOrigin(0.5, 0.5).setText(rank);
-			// 	this.name = this.make.text({
-			// 		x: this.halfWidth - (40 * dpr),
-			// 		y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
-			// 		text: "0",
-			// 		padding: {
-			// 			left: 5,
-			// 			right: 5,
-			// 			top: 5,
-			// 			bottom: 5
-			// 		},
-			// 		style: {
-			// 			align: "center",
-			// 			fontFamily: "Arial Black",
-			// 			fontSize: 8 * dpr,
-			// 			fill: "#000000"
-			// 		}
-			// 	}).setDepth(2).setOrigin(0, 0.5).setText(name);
-			// 	this.score = this.make.text({
-			// 		x: this.halfWidth + (35 * dpr),
-			// 		y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
-			// 		text: "0",
-			// 		padding: {
-			// 			left: 5,
-			// 			right: 5,
-			// 			top: 5,
-			// 			bottom: 5
-			// 		},
-			// 		style: {
-			// 			align: "center",
-			// 			fontFamily: "Arial Black",
-			// 			fontSize: 8 * dpr,
-			// 			fill: "#000000"
-			// 		}
-			// 	}).setDepth(2).setOrigin(0, 0.5).setText(score);
-			// 	rowWidth += (8 * dpr);
-			// 	rank++;
-			// });
-
-			// if (!userInHighest) {
-			// 	//GET USER QUERY AFTER UPDATE (Not in Highest)
-            // 	const queryUser2 = await getDoc(docRef);
-            // 	if (queryUser2.exists()) {
-			// 		let name = doc.data().name.length > 8 ? doc.data().name.substring(0, 11) : doc.data().name;
-			// 		let score = String(doc.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
-			// 		this.add.graphics()
-			// 			.fillStyle(0xF7D013, 0.4)
-			// 			.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
-			// 			.setDepth(2);
-			// 		this.rank = this.make.text({
-			// 			x: this.halfWidth - (70 * dpr),
-			// 			y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
-			// 			text: "0",
-			// 			padding: {
-			// 				left: 5,
-			// 				right: 5,
-			// 				top: 5,
-			// 				bottom: 5
-			// 			},
-			// 			style: {
-			// 				align: "center",
-			// 				fontFamily: "Arial Black",
-			// 				fontSize: 8 * dpr,
-			// 				fill: "#000000"
-			// 			}
-			// 		}).setDepth(2).setOrigin(0.5, 0.5).setText(rank);
-				
-			// 		this.name = this.make.text({
-			// 			x: this.halfWidth - (40 * dpr),
-			// 			y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
-			// 			text: "0",
-			// 			padding: {
-			// 				left: 5,
-			// 				right: 5,
-			// 				top: 5,
-			// 				bottom: 5
-			// 			},
-			// 			style: {
-			// 				align: "center",
-			// 				fontFamily: "Arial Black",
-			// 				fontSize: 8 * dpr,
-			// 				fill: "#000000"
-			// 			}
-			// 		}).setDepth(2).setOrigin(0, 0.5).setText(name);
-				
-			// 		this.score = this.make.text({
-			// 			x: this.halfWidth + (35 * dpr),
-			// 			y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
-			// 			text: "0",
-			// 			padding: {
-			// 				left: 5,
-			// 				right: 5,
-			// 				top: 5,
-			// 				bottom: 5
-			// 			},
-			// 			style: {
-			// 				align: "center",
-			// 				fontFamily: "Arial Black",
-			// 				fontSize: 8 * dpr,
-			// 				fill: "#000000"
-			// 			}
-			// 		}).setDepth(2).setOrigin(0, 0.5).setText(score);
-			// 	}
-			// }
+				}
+			}
 		}
-
-		// update() {
-		//     if (this.currentTicket != undefined && this.currentTicket != null && currentTicket != undefined && currentTicket != null) {
-		//         this.currentTicket.setText(`Your Current Ticket: ${currentTicket}`);
-		//     }
-		// }
 	}
 
 	var ns = Q.use("fish");
@@ -733,13 +554,15 @@ export async function updateScore(newScore) {
 		this.showFPS();
 	};
 
-	game.setBtnLeaderboard = function () {
+	game.setBtnLeaderboard = function (world) {
 		var stat = false
 		document.getElementById("look").addEventListener("click", function () {
 			if (stat) {
+				world.scene.stop("Leaderboard");
 				getToBack()
 				stat = !stat
 			} else {
+				world.scene.start("Leaderboard");
 				getToFront()
 				stat = !stat
 			}
