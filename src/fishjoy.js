@@ -517,6 +517,87 @@ export async function updateScore(newScore) {
 			};
 		}
 
+		if (document.addEventListener) {
+			 document.addEventListener('fullscreenchange', enterHandler, false);
+			 document.addEventListener('mozfullscreenchange', enterHandler, false);
+			 document.addEventListener('MSFullscreenChange', enterHandler, false);
+			 document.addEventListener('webkitfullscreenchange', enterHandler, false);
+			 document.addEventListener('fullscreenchange', exitHandler, false);
+			 document.addEventListener('mozfullscreenchange', exitHandler, false);
+			 document.addEventListener('MSFullscreenChange', exitHandler, false);
+			 document.addEventListener('webkitfullscreenchange', exitHandler, false);
+		}
+
+		function enterHandler() {
+			if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement) {
+		  		console.log("FULL");
+				  if (Q.isIpod || Q.isIphone || Q.isAndroid) {
+					this.width = window.innerWidth; //980;
+					this.height = window.innerHeight; //545;
+					Q.addMeta({
+						name: "viewport",
+						content: "user-scalable=no"
+					});
+				} else {
+					Q.addMeta({
+						name: "viewport",
+						content: "user-scalable=no, initial-scale=1.0, minimum-scale=1, maximum-scale=1"
+					});
+					this.width = Math.max(1024, window.innerWidth);
+					this.height = Math.max(768, window.innerHeight);
+				}
+		
+				if (params.width) this.width = Number(params.width) || this.width;
+				if (params.height) this.height = Number(params.height) || this.height;
+		
+		
+				this.container = container || Q.getDOM("container");
+				this.container.style.overflow = "hidden";
+				this.container.style.width = this.width + "px";
+				this.container.style.height = this.height + "px";
+				this.screenWidth = window.innerWidth;
+				this.screenHeight = window.innerHeight;
+
+				game.hideNavBar();
+				if (game.stage) game.stage.updatePosition();
+			}
+		}
+
+		function exitHandler() {
+			if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
+		  		console.log("MINI");
+				  if (Q.isIpod || Q.isIphone || Q.isAndroid) {
+					this.width = window.innerWidth; //980;
+					this.height = window.innerHeight; //545;
+					Q.addMeta({
+						name: "viewport",
+						content: "user-scalable=no"
+					});
+				} else {
+					Q.addMeta({
+						name: "viewport",
+						content: "user-scalable=no, initial-scale=1.0, minimum-scale=1, maximum-scale=1"
+					});
+					this.width = Math.max(1024, window.innerWidth);
+					this.height = Math.max(768, window.innerHeight);
+				}
+		
+				if (params.width) this.width = Number(params.width) || this.width;
+				if (params.height) this.height = Number(params.height) || this.height;
+		
+		
+				this.container = container || Q.getDOM("container");
+				this.container.style.overflow = "hidden";
+				this.container.style.width = this.width + "px";
+				this.container.style.height = this.height + "px";
+				this.screenWidth = window.innerWidth;
+				this.screenHeight = window.innerHeight;
+				
+				game.hideNavBar();
+				if (game.stage) game.stage.updatePosition();
+			}
+		}
+
 		//start load image
 		var imgLoader = new Q.ImageLoader();
 		imgLoader.addEventListener("loaded", Q.delegate(this.onLoadLoaded, this));
