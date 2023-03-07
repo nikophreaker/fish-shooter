@@ -229,8 +229,6 @@ export async function updateScore(newScore) {
 							let q = query(colRef, where("notelp", "==", String(notelp)));
 							let data = await getDocs(q);
 							if (data.size == 0 ) {
-								addScores();
-								addScore(999, 11);
 								world.scene.stop("InputData");
 								await setDoc(docRef, {
 									name: username,
