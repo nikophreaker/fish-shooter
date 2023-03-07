@@ -18,11 +18,11 @@ export default {
         "./src/views/Fish.js", "./src/views/Cannon.js", "./src/views/Bullet.js", "./src/views/Num.js", "./src/views/Player.js"
     ],
 
-    plugins: [
-        new WebpackObfuscator({
-            rotateStringArray: true
-        }, [])
-    ],
+    // plugins: [
+    //     new WebpackObfuscator({
+    //         rotateStringArray: true
+    //     }, [])
+    // ],
 
     // output file
     output: {

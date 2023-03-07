@@ -15,12 +15,27 @@
  */
 "use strict";
 
-import { getApp } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getCountFromServer } from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
 
+// CONFIGURASI FIREBASE
+const firebaseConfig = {
+  apiKey: "AIzaSyBdFMZoNwEWNqCOfUezoSB-TewpOBUfX98",
+  authDomain: "mgoalindo---app.firebaseapp.com",
+  databaseURL: "https://mgoalindo---app-default-rtdb.firebaseio.com",
+  projectId: "mgoalindo---app",
+  storageBucket: "mgoalindo---app.appspot.com",
+  messagingSenderId: "909481590933",
+  appId: "1:909481590933:web:a0626d75765bd850a5db9c",
+  measurementId: "G-RLCM7JVYFY"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const functions = getFunctions(app, "asia-southeast2");
+
 async function invokeFunctionCall(name) {
-  const functions = getFunctions();
   const callable = httpsCallable(functions, name);
   callable({})
     .then((result) => {
@@ -29,7 +44,6 @@ async function invokeFunctionCall(name) {
 }
 
 export async function fetchLeaderboardCount() {
-  const app = getApp();
   const db = getFirestore(app);
   const coll = collection(db, "scores");
   const snapshot = await getCountFromServer(coll);
@@ -41,7 +55,6 @@ export async function addScores() {
 }
 
 export async function addScore(user, score) {
-  const functions = getFunctions();
   const callable = httpsCallable(functions, "addScore");
   callable({playerID: user, score: score})
     .then((result) => {
@@ -54,7 +67,6 @@ export async function deleteScores() {
 }
 
 export async function getRank(user) {
-  const functions = getFunctions();
   const callable = httpsCallable(functions, "getRank");
   callable({playerID: user})
     .then((result) => {
@@ -63,7 +75,6 @@ export async function getRank(user) {
 }
 
 export async function updateScore(user, score) {
-  const functions = getFunctions();
   const callable = httpsCallable(functions, "updateScore");
   callable({playerID: user, newScore: score})
     .then((result) => {
