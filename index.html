@@ -46,6 +46,9 @@
       overflow: hidden;
       position: relative;
       width: 100%;
+      background-size:     cover;
+      background-repeat:   no-repeat;
+      background-position: center center;
     }
 
     #outer[id] {
@@ -67,8 +70,8 @@
 
     #full {
       position: absolute;
-      width: 2%;
-      height: 4%;
+      width: 4%;
+      height: 8%;
       right: 0;
       top: 0;
       margin: 10px;
@@ -136,7 +139,7 @@
       <div id="container" style="position:relative;top:0%;margin:0 auto;"></div>
       <div id="leaderboard" style="position:absolute;top:0%;margin:0 auto;z-index: 2;"></div>
       <p id="look">LEADERBOARD</p>
-      <img id="full" src="./images/max.png" onclick="toggleFullscreen()">
+      <img id="full" src="./images/ic_fullScreen.png" onclick="toggleFullscreen()">
       <img id="music" src="./images/ic_unmute.png" onclick="toggleSFX()">
       <div id="msg"></div>
     </div>
@@ -156,11 +159,11 @@
 
     function toggleFullscreen() {
       if (fulled) {
-        fullImg.src = "./images/mini.png";
+        fullImg.src = "./images/ic_miniScreen.png";
         openFullscreen()
         fulled = !fulled
       } else {
-        fullImg.src = "./images/max.png";
+        fullImg.src = "./images/ic_fullScreen.png";
         closeFullscreen()
         fulled = !fulled
       }

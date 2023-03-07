@@ -14,7 +14,7 @@ export default {
     mode: "production",
 
     // input file
-    entry: ["./src/fishjoy.js", "./src/R.js", "./src/Utils.js", "./src/FishManager.js", "./src/FishGroup.js",
+    entry: ["./src/fishjoy.js", "./src/R.js", "./src/Utils.js", "./src/FishManager.js", "./src/FishGroup.js", "./src/leaderboard.js",
         "./src/views/Fish.js", "./src/views/Cannon.js", "./src/views/Bullet.js", "./src/views/Num.js", "./src/views/Player.js"
     ],
 

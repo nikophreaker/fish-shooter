@@ -8,6 +8,7 @@
 // import "./views/Bullet.js";
 // import "./views/Num.js";
 // import "./views/Player.js";
+import { addScores,addScore } from "./leaderboard.js"
 import {
 	initializeApp
 } from "firebase/app";
@@ -59,6 +60,7 @@ const db = getFirestore(app);
 const col = "fishshoot-m88-leaderboard";
 const colRef = collection(db, col);
 
+var first = true;
 var name, telp;
 export async function updateScore(newScore) {
 	let playerRef = doc(db, col, String(telp));
@@ -68,29 +70,74 @@ export async function updateScore(newScore) {
 }
 
 (function () {
+
 	let dpr = 2; //window.devicePixelRatio;
 	window.onload = function () {
-		let gameConfig = {
-			type: Phaser.CANVAS,
-			scale: {
-				mode: Phaser.Scale.FIT,
-				autoCenter: Phaser.Scale.CENTER_BOTH,
-				parent: "leaderboard",
-				width: window.innerWidth * dpr,
-				height: window.innerHeight * dpr,
-			},
-			dom: {
-				createContainer: true
-			},
-			transparent: true,
-			backgroundColor: 0x2A3141, //0xD30000,
-			scene: [InputData, Leaderboard]
-		};
-		var games = new Phaser.Game(gameConfig);
-		window.focus();
-		setTimeout(function () {
-			game.load();
-		}, 10);
+		if (screen.orientation.type == "portrait" || screen.orientation.type == "portrait-primary" || screen.orientation.type == "portrait-secondary") {
+			document.getElementById("outer").style.backgroundImage = "url(./images/turn.png)";
+			document.getElementById("middle").style.visibility = "hidden";
+		} else {
+			document.getElementById("outer").style.backgroundImage = "";
+			document.getElementById("middle").style.visibility = "visible";
+			if (first) {
+				first = false;
+				let gameConfig = {
+					type: Phaser.CANVAS,
+					scale: {
+						mode: Phaser.Scale.FIT,
+						autoCenter: Phaser.Scale.CENTER_BOTH,
+						parent: "leaderboard",
+						width: window.innerWidth * dpr,
+						height: window.innerHeight * dpr,
+					},
+					dom: {
+						createContainer: true
+					},
+					transparent: true,
+					backgroundColor: 0x2A3141, //0xD30000,
+					scene: [InputData, Leaderboard]
+				};
+				var games = new Phaser.Game(gameConfig);
+				window.focus();
+				setTimeout(function () {
+					game.load();
+				}, 10);
+			}
+		}
+
+		window.addEventListener("orientationchange", function() {
+			if (screen.orientation.type == "landscape" || screen.orientation.type == "landscape-primary" || screen.orientation.type == "landscape-secondary") {
+				document.getElementById("outer").style.backgroundImage = "";
+				document.getElementById("middle").style.visibility = "visible";
+				if (first) {
+					first = false;
+					let gameConfig = {
+						type: Phaser.CANVAS,
+						scale: {
+							mode: Phaser.Scale.FIT,
+							autoCenter: Phaser.Scale.CENTER_BOTH,
+							parent: "leaderboard",
+							width: window.innerWidth * dpr,
+							height: window.innerHeight * dpr,
+						},
+						dom: {
+							createContainer: true
+						},
+						transparent: true,
+						backgroundColor: 0x2A3141, //0xD30000,
+						scene: [InputData, Leaderboard]
+					};
+					var games = new Phaser.Game(gameConfig);
+					window.focus();
+					setTimeout(function () {
+						game.load();
+					}, 10);
+				}
+			} else {
+				document.getElementById("outer").style.backgroundImage = "url(./images/turn.png)";
+				document.getElementById("middle").style.visibility = "hidden";
+			}
+		});
 	};
 
 	class InputData extends Phaser.Scene {
@@ -173,33 +220,38 @@ export async function updateScore(newScore) {
 					if (txt2 != "" && txt2 != undefined && txt2 != null) {
 						var username = name = txt;
 						var notelp = telp = txt2;
-						// world.scene.start("Leaderboard");
-						// console.log(username + " " + notelp);
 
 						//GET USER DOC
 						let docRef = doc(db, col, String(notelp));
-						let q = query(colRef, where("notelp", "==", String(notelp)));
+						let q = query(colRef, where("name", "==", String(username)));
 						let data = await getDocs(q);
 						if (data.size == 0 ) {
-							world.scene.stop("InputData");
-							await setDoc(docRef, {
-								name: username,
-								notelp: notelp,
-								score: 1000,
-								date: tglIndonesia(),
-								timestamp: Math.floor(Date.now() / 1000),
-							}).then(()=>{
-								setTimeout(function () {
-									document.getElementById("leaderboard").style.zIndex = "-1";
-									game.setBtnLeaderboard(world);
-									// world.scene.start("MainClass");
-								}, 10);
-								setTimeout(function () {
-									document.getElementById("banner").style.visibility = "visible";
-								}, 5000);
-							});
+							let q = query(colRef, where("notelp", "==", String(notelp)));
+							let data = await getDocs(q);
+							if (data.size == 0 ) {
+								addScores();
+								addScore(999, 11);
+								world.scene.stop("InputData");
+								await setDoc(docRef, {
+									name: username,
+									notelp: notelp,
+									score: 1000,
+									date: tglIndonesia(),
+									timestamp: Math.floor(Date.now() / 1000),
+								}).then(()=>{
+									setTimeout(function () {
+										document.getElementById("leaderboard").style.zIndex = "-1";
+										game.setBtnLeaderboard(world);
+									}, 10);
+									setTimeout(function () {
+										document.getElementById("banner").style.visibility = "visible";
+									}, 5000);
+								});
+							} else {
+								alert(`Nomor ${notelp} sudah terdaftar`);
+							}
 						} else {
-							alert(`Nomor ${notelp} sudah terdaftar`);
+							alert(`Nama ${username} sudah terdaftar`);
 						}
 					} else {
 						alert("No telp tidak boleh kosong!");
@@ -326,12 +378,16 @@ export async function updateScore(newScore) {
 					let name = queryUser2.data().name.length > 8 ? queryUser2.data().name.substring(0, 11) : queryUser2.data().name;
 					let score = String(queryUser2.data().score).replace(/(.)(?=(\d{3})+$)/g, '$1,');
 					this.add.graphics()
+						.fillStyle(0x000000, 1)
+						.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (2 * dpr))
+						.setDepth(2);
+					this.add.graphics()
 						.fillStyle(0xF7D013, 0.4)
-						.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + (rowWidth * dpr), (175 * dpr), (10 * dpr))
+						.fillRect(this.halfWidth - (85 * dpr), (this.halfHeight - (95 * dpr)) + ((rowWidth * dpr) + (5 * dpr)), (175 * dpr), (10 * dpr))
 						.setDepth(2);
 					this.rank = this.make.text({
 						x: this.halfWidth - (70 * dpr),
-						y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+						y: (this.halfHeight - (90 * dpr)) + ((rowWidth * dpr) + (5 * dpr)),
 						text: "0",
 						padding: {
 							left: 5,
@@ -349,7 +405,7 @@ export async function updateScore(newScore) {
 				
 					this.name = this.make.text({
 						x: this.halfWidth - (40 * dpr),
-						y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+						y: (this.halfHeight - (90 * dpr)) + ((rowWidth * dpr) + (5 * dpr)),
 						text: "0",
 						padding: {
 							left: 5,
@@ -367,7 +423,7 @@ export async function updateScore(newScore) {
 				
 					this.score = this.make.text({
 						x: this.halfWidth + (35 * dpr),
-						y: (this.halfHeight - (90 * dpr)) + (rowWidth * dpr),
+						y: (this.halfHeight - (90 * dpr)) + ((rowWidth * dpr) + (5 * dpr)),
 						text: "0",
 						padding: {
 							left: 5,
