@@ -24,7 +24,6 @@ import {updateScore} from "../fishjoy.js";
 	Player.prototype.init = function () {
 		var me = this,
 			power = 1;
-
 		this.cannon = new ns.Cannon(ns.R.cannonTypes[power]);
 		this.cannon.id = "cannon";
 		this.cannon.x = game.bottom.x + 425;

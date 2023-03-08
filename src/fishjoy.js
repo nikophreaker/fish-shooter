@@ -165,9 +165,13 @@ export async function updateScore(newScore) {
 			this.load.image("bgDialog", "fieldvoucher.png");
 			this.load.image("okButton", "okButton.png");
 			this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true);
+			this.load.path = "./audio/";
+			this.load.audio("clickedBtn", "click.mp3");
 		}
 
 		async create() {
+			let click1 = true;
+			let clicked = this.sound.add("clickedBtn");
 			// this.add.graphics().setDepth(0).fillStyle(0x000000, 0.8).fillRect(0, 0, this.gameWidth, this.gameHeight);
 			var dialogBg = this.add.sprite(this.halfWidth, this.halfHeight, "bgDialog");
 			dialogBg.setScale(0.25 * dpr);
@@ -210,52 +214,67 @@ export async function updateScore(newScore) {
 			this.btnOk = this.add.sprite(this.halfWidth, this.halfHeight + (100 * dpr), "okButton");
 			this.btnOk.setScale(0.15 * dpr);
 			this.btnOk.setInteractive();
-			this.btnOk.on("pointerover", function () {});
-			this.btnOk.on("pointerout", function () {});
-			this.btnOk.on("pointerdown", async function () {
-				let txt = inputText.text
-				let txt2 = inputText2.text
-				// GET KODE DATA
-				if (txt != "" && txt != undefined && txt != null) {
-					if (txt2 != "" && txt2 != undefined && txt2 != null) {
-						var username = name = txt;
-						var notelp = telp = txt2;
+			this.btnOk.on("pointerover", function () {
 
-						//GET USER DOC
-						let docRef = doc(db, col, String(notelp));
-						let q = query(colRef, where("name", "==", String(username)));
-						let data = await getDocs(q);
-						if (data.size == 0 ) {
-							let q = query(colRef, where("notelp", "==", String(notelp)));
+			});
+			this.btnOk.on("pointerout", function () {
+
+			});
+			this.btnOk.on("pointerdown", async function () {
+				if (click1) {
+					click1 = false;
+					clicked.play();
+					let txt = inputText.text
+					let txt2 = inputText2.text
+					// GET KODE DATA
+					if (txt != "" && txt != undefined && txt != null) {
+						if (txt2 != "" && txt2 != undefined && txt2 != null) {
+							var username = name = txt;
+							var notelp = telp = txt2;
+							//GET USER DOC
+							let docRef = doc(db, col, String(notelp));
+							let q = query(colRef, where("name", "==", String(username)));
 							let data = await getDocs(q);
 							if (data.size == 0 ) {
-								world.scene.stop("InputData");
-								await setDoc(docRef, {
-									name: username,
-									notelp: notelp,
-									score: 1000,
-									date: tglIndonesia(),
-									timestamp: Math.floor(Date.now() / 1000),
-								}).then(()=>{
-									setTimeout(function () {
-										document.getElementById("leaderboard").style.zIndex = "-1";
-										game.setBtnLeaderboard(world);
-									}, 10);
-									setTimeout(function () {
-										document.getElementById("banner").style.visibility = "visible";
-									}, 5000);
-								});
+								let q = query(colRef, where("notelp", "==", String(notelp)));
+								let data = await getDocs(q);
+								if (data.size == 0 ) {
+									await setDoc(docRef, {
+										name: username,
+										notelp: notelp,
+										score: 1000,
+										date: tglIndonesia(),
+										timestamp: Math.floor(Date.now() / 1000),
+									}).then(()=>{
+										setTimeout(function () {
+											world.scene.stop("InputData");
+											document.getElementById("leaderboard").style.zIndex = "-1";
+											game.setBtnLeaderboard(world);
+											click1 = true;
+										}, 10);
+										setTimeout(function () {
+											document.getElementById("banner").style.visibility = "visible";
+										}, 5000);
+									}).catch((error) => {
+										click1 = true;
+										alert(`Error ${error}`);
+									});
+								} else {
+									click1 = true;
+									alert(`Nomor ${notelp} sudah terdaftar`);
+								}
 							} else {
-								alert(`Nomor ${notelp} sudah terdaftar`);
+								click1 = true;
+								alert(`Nama ${username} sudah terdaftar`);
 							}
 						} else {
-							alert(`Nama ${username} sudah terdaftar`);
+							click1 = true;
+							alert("No telp tidak boleh kosong!");
 						}
 					} else {
-						alert("No telp tidak boleh kosong!");
+						click1 = true;
+						alert("Nama tidak boleh kosong!");
 					}
-				} else {
-					alert("Nama tidak boleh kosong!");
 				}
 			});
 		}
@@ -530,7 +549,6 @@ export async function updateScore(newScore) {
 
 		function enterHandler() {
 			if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement) {
-		  		console.log("FULL");
 				  if (Q.isIpod || Q.isIphone || Q.isAndroid) {
 					this.width = window.innerWidth; //980;
 					this.height = window.innerHeight; //545;
@@ -565,7 +583,6 @@ export async function updateScore(newScore) {
 
 		function exitHandler() {
 			if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
-		  		console.log("MINI");
 				  if (Q.isIpod || Q.isIphone || Q.isAndroid) {
 					this.width = window.innerWidth; //980;
 					this.height = window.innerHeight; //545;
