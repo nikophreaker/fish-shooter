@@ -252,7 +252,7 @@ export async function updateScore(newScore) {
 				// this.add.graphics().setDepth(0).fillStyle(0x000000, 0.8).fillRect(0, 0, this.gameWidth, this.gameHeight);
 				var dialogBg = this.add.sprite(this.halfWidth, this.halfHeight, "bgDialog");
 				dialogBg.setScale(0.35 * dpr);
-				this.inputText = this.add.rexInputText(this.halfWidth, this.halfHeight + (35 * dpr), 200 * dpr, 35 * dpr, {
+				this.inputText = this.add.rexInputText(this.halfWidth+ (8 * dpr), this.halfHeight + (35 * dpr), 200 * dpr, 35 * dpr, {
 					// Style properties
 					align: "center",
 					fontSize: `${14 * dpr}px`,
@@ -266,7 +266,7 @@ export async function updateScore(newScore) {
 					placeholder: 'MASUKKAN USERNAME'
 				});
 	
-				this.inputText2 = this.add.rexInputText(this.halfWidth, this.halfHeight + (88 * dpr), 200 * dpr, 35 * dpr, {
+				this.inputText2 = this.add.rexInputText(this.halfWidth+ (8 * dpr), this.halfHeight + (88 * dpr), 200 * dpr, 35 * dpr, {
 					// Style properties
 					align: "center",
 					fontSize: `${14 * dpr}px`,
@@ -292,7 +292,7 @@ export async function updateScore(newScore) {
 				}, this);
 	
 				let world = this;
-				this.btnOk = this.add.sprite(this.halfWidth, this.halfHeight + (140 * dpr), "okButton");
+				this.btnOk = this.add.sprite(this.halfWidth + (8 * dpr), this.halfHeight + (140 * dpr), "okButton");
 				this.btnOk.setScale(0.2 * dpr);
 				this.btnOk.setInteractive();
 				this.btnOk.on("pointerover", function () {
@@ -364,7 +364,7 @@ export async function updateScore(newScore) {
 				// this.add.graphics().setDepth(0).fillStyle(0x000000, 0.8).fillRect(0, 0, this.gameWidth, this.gameHeight);
 				var dialogBg = this.add.sprite(this.halfWidth, this.halfHeight, "bgDialog");
 				dialogBg.setScale(0.4 * dpr);
-				this.inputText = this.add.rexInputText(this.halfWidth, this.halfHeight + (40 * dpr), 220 * dpr, 35 * dpr, {
+				this.inputText = this.add.rexInputText(this.halfWidth + (8 * dpr), this.halfHeight + (40 * dpr), 220 * dpr, 35 * dpr, {
 					// Style properties
 					align: "center",
 					fontSize: `${16 * dpr}px`,
@@ -378,7 +378,7 @@ export async function updateScore(newScore) {
 					placeholder: 'MASUKKAN USERNAME'
 				});
 	
-				this.inputText2 = this.add.rexInputText(this.halfWidth, this.halfHeight + (98 * dpr), 220 * dpr, 35 * dpr, {
+				this.inputText2 = this.add.rexInputText(this.halfWidth + (8 * dpr), this.halfHeight + (98 * dpr), 220 * dpr, 35 * dpr, {
 					// Style properties
 					align: "center",
 					fontSize: `${16 * dpr}px`,
@@ -404,7 +404,7 @@ export async function updateScore(newScore) {
 				}, this);
 	
 				let world = this;
-				this.btnOk = this.add.sprite(this.halfWidth, this.halfHeight + (160 * dpr), "okButton");
+				this.btnOk = this.add.sprite(this.halfWidth+ (8 * dpr), this.halfHeight + (160 * dpr), "okButton");
 				this.btnOk.setScale(0.25 * dpr);
 				this.btnOk.setInteractive();
 				this.btnOk.on("pointerover", function () {
