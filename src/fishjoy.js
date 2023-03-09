@@ -871,7 +871,9 @@ export async function updateScore(newScore) {
 		this.bottom.y = this.height - this.bottom.height + 2;
 		this.bottom.transformEnabled = false;
 
-		this.stage.addChild(this.bg, this.fishContainer, this.bottom);
+		// this.stage.addChild(this.bg, this.fishContainer, this.bottom);
+		this.stage.addChild(this.fishContainer, this.bottom);
+
 	};
 
 	game.initPlayer = function () {
