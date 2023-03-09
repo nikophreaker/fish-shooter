@@ -75,6 +75,7 @@ export async function updateScore(newScore) {
 	window.onload = function () {
 		//start load sound
 		loadSound();
+		const canvas = document.getElementById("container");
 		if (screen.orientation.type == "portrait" || screen.orientation.type == "portrait-primary" || screen.orientation.type == "portrait-secondary") {
 			document.getElementById("outer").style.backgroundImage = "url(./images/turn.png)";
 			document.getElementById("middle").style.visibility = "hidden";
@@ -89,8 +90,8 @@ export async function updateScore(newScore) {
 						mode: Phaser.Scale.FIT,
 						autoCenter: Phaser.Scale.CENTER_BOTH,
 						parent: "leaderboard",
-						width: window.innerWidth * dpr,
-						height: window.innerHeight * dpr,
+						width: 980 * dpr,
+						height: 453 * dpr,
 					},
 					dom: {
 						createContainer: true
@@ -119,8 +120,8 @@ export async function updateScore(newScore) {
 							mode: Phaser.Scale.FIT,
 							autoCenter: Phaser.Scale.CENTER_BOTH,
 							parent: "leaderboard",
-							width: window.innerWidth * dpr,
-							height: window.innerHeight * dpr,
+							width: 980 * dpr,
+							height: 453* dpr,
 						},
 						dom: {
 							createContainer: true
