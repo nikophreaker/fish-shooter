@@ -71,8 +71,10 @@ export async function updateScore(newScore) {
 
 (function () {
 
-	let dpr = 2; //window.devicePixelRatio;
+	let dpr = window.devicePixelRatio;
 	window.onload = function () {
+		//start load sound
+		loadSound();
 		if (screen.orientation.type == "portrait" || screen.orientation.type == "portrait-primary" || screen.orientation.type == "portrait-secondary") {
 			document.getElementById("outer").style.backgroundImage = "url(./images/turn.png)";
 			document.getElementById("middle").style.visibility = "hidden";
@@ -170,113 +172,231 @@ export async function updateScore(newScore) {
 		}
 
 		async create() {
-			let click1 = true;
-			let clicked = this.sound.add("clickedBtn");
-			// this.add.graphics().setDepth(0).fillStyle(0x000000, 0.8).fillRect(0, 0, this.gameWidth, this.gameHeight);
-			var dialogBg = this.add.sprite(this.halfWidth, this.halfHeight, "bgDialog");
-			dialogBg.setScale(0.25 * dpr);
-			this.inputText = this.add.rexInputText(this.halfWidth, this.halfHeight + (25 * dpr), 120 * dpr, 35 * dpr, {
-				// Style properties
-				align: "center",
-				fontSize: `${12 * dpr}px`,
-				color: '#ffffff',
-				border: 0,
-				backgroundColor: 'transparent',
-				borderColor: 'transparent',
-				outline: 'none',
-				direction: 'ltr',
-			});
-
-			this.inputText2 = this.add.rexInputText(this.halfWidth, this.halfHeight + (62 * dpr), 120 * dpr, 35 * dpr, {
-				// Style properties
-				align: "center",
-				fontSize: `${12 * dpr}px`,
-				color: '#ffffff',
-				border: 0,
-				backgroundColor: 'transparent',
-				borderColor: 'transparent',
-				outline: 'none',
-				direction: 'ltr',
-				type: 'number',
-			});
-
-			let inputText = this.inputText;
-			this.inputText.on('textchange', function (inputs, e) {
-				inputText.setText(inputs.text.toString().toUpperCase());
-			}, this);
-
-			let inputText2 = this.inputText2;
-			this.inputText2.on('textchange', function (inputs, e) {
-				inputText2.setText(inputs.text.toString().toUpperCase());
-			}, this);
-
-			let world = this;
-			this.btnOk = this.add.sprite(this.halfWidth, this.halfHeight + (100 * dpr), "okButton");
-			this.btnOk.setScale(0.15 * dpr);
-			this.btnOk.setInteractive();
-			this.btnOk.on("pointerover", function () {
-
-			});
-			this.btnOk.on("pointerout", function () {
-
-			});
-			this.btnOk.on("pointerdown", async function () {
-				if (click1) {
-					click1 = false;
-					clicked.play();
-					let txt = inputText.text
-					let txt2 = inputText2.text
-					// GET KODE DATA
-					if (txt != "" && txt != undefined && txt != null) {
-						if (txt2 != "" && txt2 != undefined && txt2 != null) {
-							var username = name = txt;
-							var notelp = telp = txt2;
-							//GET USER DOC
-							let docRef = doc(db, col, String(notelp));
-							let q = query(colRef, where("name", "==", String(username)));
-							let data = await getDocs(q);
-							if (data.size == 0 ) {
-								let q = query(colRef, where("notelp", "==", String(notelp)));
+			if (window.mobileCheck()) {
+				let click1 = true;
+				let clicked = this.sound.add("clickedBtn");
+				// this.add.graphics().setDepth(0).fillStyle(0x000000, 0.8).fillRect(0, 0, this.gameWidth, this.gameHeight);
+				var dialogBg = this.add.sprite(this.halfWidth, this.halfHeight, "bgDialog");
+				dialogBg.setScale(0.35 * dpr);
+				this.inputText = this.add.rexInputText(this.halfWidth, this.halfHeight + (35 * dpr), 200 * dpr, 35 * dpr, {
+					// Style properties
+					align: "center",
+					fontSize: `${14 * dpr}px`,
+					color: '#ffffff',
+					fontStyle: 'bold',
+					border: 0,
+					backgroundColor: 'transparent',
+					borderColor: 'transparent',
+					outline: 'none',
+					direction: 'ltr',
+					placeholder: 'MASUKKAN USERNAME'
+				});
+	
+				this.inputText2 = this.add.rexInputText(this.halfWidth, this.halfHeight + (88 * dpr), 200 * dpr, 35 * dpr, {
+					// Style properties
+					align: "center",
+					fontSize: `${14 * dpr}px`,
+					fontStyle: 'bold',
+					color: '#ffffff',
+					border: 0,
+					backgroundColor: 'transparent',
+					borderColor: 'transparent',
+					outline: 'none',
+					direction: 'ltr',
+					type: 'number',
+					placeholder: 'MASUKKAN NO. HP'
+				});
+	
+				let inputText = this.inputText;
+				this.inputText.on('textchange', function (inputs, e) {
+					inputText.setText(inputs.text.toString().toUpperCase());
+				}, this);
+	
+				let inputText2 = this.inputText2;
+				this.inputText2.on('textchange', function (inputs, e) {
+					inputText2.setText(inputs.text.toString().toUpperCase());
+				}, this);
+	
+				let world = this;
+				this.btnOk = this.add.sprite(this.halfWidth, this.halfHeight + (140 * dpr), "okButton");
+				this.btnOk.setScale(0.2 * dpr);
+				this.btnOk.setInteractive();
+				this.btnOk.on("pointerover", function () {
+	
+				});
+				this.btnOk.on("pointerout", function () {
+	
+				});
+				this.btnOk.on("pointerdown", async function () {
+					if (click1) {
+						click1 = false;
+						clicked.play();
+						let txt = inputText.text
+						let txt2 = inputText2.text
+						// GET KODE DATA
+						if (txt != "" && txt != undefined && txt != null) {
+							if (txt2 != "" && txt2 != undefined && txt2 != null) {
+								var username = name = txt;
+								var notelp = telp = txt2;
+								//GET USER DOC
+								let docRef = doc(db, col, String(notelp));
+								let q = query(colRef, where("name", "==", String(username)));
 								let data = await getDocs(q);
 								if (data.size == 0 ) {
-									await setDoc(docRef, {
-										name: username,
-										notelp: notelp,
-										score: 1000,
-										date: tglIndonesia(),
-										timestamp: Math.floor(Date.now() / 1000),
-									}).then(()=>{
-										setTimeout(function () {
-											world.scene.stop("InputData");
-											document.getElementById("leaderboard").style.zIndex = "-1";
-											game.setBtnLeaderboard(world);
+									let q = query(colRef, where("notelp", "==", String(notelp)));
+									let data = await getDocs(q);
+									if (data.size == 0 ) {
+										await setDoc(docRef, {
+											name: username,
+											notelp: notelp,
+											score: 1000,
+											date: tglIndonesia(),
+											timestamp: Math.floor(Date.now() / 1000),
+										}).then(()=>{
+											setTimeout(function () {
+												world.scene.stop("InputData");
+												document.getElementById("leaderboard").style.zIndex = "-1";
+												game.setBtnLeaderboard(world);
+												click1 = true;
+											}, 10);
+											setTimeout(function () {
+												document.getElementById("banner").style.visibility = "visible";
+											}, 5000);
+										}).catch((error) => {
 											click1 = true;
-										}, 10);
-										setTimeout(function () {
-											document.getElementById("banner").style.visibility = "visible";
-										}, 5000);
-									}).catch((error) => {
+											alert(`Error ${error}`);
+										});
+									} else {
 										click1 = true;
-										alert(`Error ${error}`);
-									});
+										alert(`Nomor ${notelp} sudah terdaftar`);
+									}
 								} else {
 									click1 = true;
-									alert(`Nomor ${notelp} sudah terdaftar`);
+									alert(`Nama ${username} sudah terdaftar`);
 								}
 							} else {
 								click1 = true;
-								alert(`Nama ${username} sudah terdaftar`);
+								alert("No telp tidak boleh kosong!");
 							}
 						} else {
 							click1 = true;
-							alert("No telp tidak boleh kosong!");
+							alert("Nama tidak boleh kosong!");
 						}
-					} else {
-						click1 = true;
-						alert("Nama tidak boleh kosong!");
 					}
-				}
-			});
+				});
+			} else {
+				let click1 = true;
+				let clicked = this.sound.add("clickedBtn");
+				// this.add.graphics().setDepth(0).fillStyle(0x000000, 0.8).fillRect(0, 0, this.gameWidth, this.gameHeight);
+				var dialogBg = this.add.sprite(this.halfWidth, this.halfHeight, "bgDialog");
+				dialogBg.setScale(0.5 * dpr);
+				this.inputText = this.add.rexInputText(this.halfWidth, this.halfHeight + (48 * dpr), 220 * dpr, 35 * dpr, {
+					// Style properties
+					align: "center",
+					fontSize: `${16 * dpr}px`,
+					color: '#ffffff',
+					fontStyle: 'bold',
+					border: 0,
+					backgroundColor: 'transparent',
+					borderColor: 'transparent',
+					outline: 'none',
+					direction: 'ltr',
+					placeholder: 'MASUKKAN USERNAME'
+				});
+	
+				this.inputText2 = this.add.rexInputText(this.halfWidth, this.halfHeight + (122 * dpr), 220 * dpr, 35 * dpr, {
+					// Style properties
+					align: "center",
+					fontSize: `${16 * dpr}px`,
+					fontStyle: 'bold',
+					color: '#ffffff',
+					border: 0,
+					backgroundColor: 'transparent',
+					borderColor: 'transparent',
+					outline: 'none',
+					direction: 'ltr',
+					type: 'number',
+					placeholder: 'MASUKKAN NO. HP'
+				});
+	
+				let inputText = this.inputText;
+				this.inputText.on('textchange', function (inputs, e) {
+					inputText.setText(inputs.text.toString().toUpperCase());
+				}, this);
+	
+				let inputText2 = this.inputText2;
+				this.inputText2.on('textchange', function (inputs, e) {
+					inputText2.setText(inputs.text.toString().toUpperCase());
+				}, this);
+	
+				let world = this;
+				this.btnOk = this.add.sprite(this.halfWidth, this.halfHeight + (200 * dpr), "okButton");
+				this.btnOk.setScale(0.3 * dpr);
+				this.btnOk.setInteractive();
+				this.btnOk.on("pointerover", function () {
+	
+				});
+				this.btnOk.on("pointerout", function () {
+	
+				});
+				this.btnOk.on("pointerdown", async function () {
+					if (click1) {
+						click1 = false;
+						clicked.play();
+						let txt = inputText.text
+						let txt2 = inputText2.text
+						// GET KODE DATA
+						if (txt != "" && txt != undefined && txt != null) {
+							if (txt2 != "" && txt2 != undefined && txt2 != null) {
+								var username = name = txt;
+								var notelp = telp = txt2;
+								//GET USER DOC
+								let docRef = doc(db, col, String(notelp));
+								let q = query(colRef, where("name", "==", String(username)));
+								let data = await getDocs(q);
+								if (data.size == 0 ) {
+									let q = query(colRef, where("notelp", "==", String(notelp)));
+									let data = await getDocs(q);
+									if (data.size == 0 ) {
+										await setDoc(docRef, {
+											name: username,
+											notelp: notelp,
+											score: 1000,
+											date: tglIndonesia(),
+											timestamp: Math.floor(Date.now() / 1000),
+										}).then(()=>{
+											setTimeout(function () {
+												world.scene.stop("InputData");
+												document.getElementById("leaderboard").style.zIndex = "-1";
+												game.setBtnLeaderboard(world);
+												click1 = true;
+											}, 10);
+											setTimeout(function () {
+												document.getElementById("banner").style.visibility = "visible";
+											}, 5000);
+										}).catch((error) => {
+											click1 = true;
+											alert(`Error ${error}`);
+										});
+									} else {
+										click1 = true;
+										alert(`Nomor ${notelp} sudah terdaftar`);
+									}
+								} else {
+									click1 = true;
+									alert(`Nama ${username} sudah terdaftar`);
+								}
+							} else {
+								click1 = true;
+								alert("No telp tidak boleh kosong!");
+							}
+						} else {
+							click1 = true;
+							alert("Nama tidak boleh kosong!");
+						}
+					}
+				});
+			}
 		}
 	}
 
@@ -620,9 +740,6 @@ export async function updateScore(newScore) {
 		imgLoader.addEventListener("loaded", Q.delegate(this.onLoadLoaded, this));
 		imgLoader.addEventListener("complete", Q.delegate(this.onLoadComplete, this));
 		imgLoader.load(ns.R.sources);
-
-		//start load sound
-		loadSound();
 	};
 
 	game.onLoadLoaded = function (e) {
@@ -641,12 +758,6 @@ export async function updateScore(newScore) {
 	};
 
 	game.startup = function () {
-		var props = new createjs.PlayPropsConfig().set({
-			interrupt: createjs.Sound.INTERRUPT_ANY,
-			loop: -1,
-			volume: 0.75
-		})
-		createjs.Sound.play("bgm", props);
 		var me = this;
 		this.container.removeChild(this.loader);
 		this.loader = null;

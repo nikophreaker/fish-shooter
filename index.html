@@ -192,10 +192,23 @@
     }
 
     function loadSound() {
-      createjs.Sound.registerSound("audio/fire.ogg", "fire", 2);
-      createjs.Sound.registerSound("audio/change.ogg", "change", 2);
-      createjs.Sound.registerSound("audio/bgsound.ogg", "bgm", 1);
-      createjs.Sound.registerSound("audio/coins.ogg", "coins", 2);
+      createjs.Sound.on("fileload", handleFileLoad);
+      createjs.Sound.registerSound("audio/fire.ogg", "fire");
+      createjs.Sound.registerSound("audio/change.ogg", "change");
+      createjs.Sound.registerSound("audio/bgsound.ogg", "bgm");
+      createjs.Sound.registerSound("audio/coins.ogg", "coins");      
+    }
+
+    function handleFileLoad(event) {
+      if (event.id == "bgm") {
+		    var props = new createjs.PlayPropsConfig().set({
+		    	loop: -1,
+		    	volume: 0.8
+		    })
+		    createjs.Sound.play("bgm", props);
+      }
+      // A sound has been preloaded. This will fire TWICE
+      console.log("Preloaded:", event.id, event.src);
     }
 
     function toggleSFX() {
