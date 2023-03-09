@@ -91,8 +91,8 @@ export async function updateScore(newScore) {
 							mode: Phaser.Scale.FIT,
 							autoCenter: Phaser.Scale.CENTER_BOTH,
 							parent: "leaderboard",
-							width: 980 * dpr,
-							height: 453 * dpr,
+							width: 1024 * dpr,
+							height: 480 * dpr,
 						},
 						dom: {
 							createContainer: true
@@ -125,8 +125,8 @@ export async function updateScore(newScore) {
 							mode: Phaser.Scale.FIT,
 							autoCenter: Phaser.Scale.CENTER_BOTH,
 							parent: "leaderboard",
-							width: 980 * dpr,
-							height: 453 * dpr,
+							width: 1024 * dpr,
+							height: 480 * dpr,
 						},
 						dom: {
 							createContainer: true
