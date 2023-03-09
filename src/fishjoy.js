@@ -363,8 +363,8 @@ export async function updateScore(newScore) {
 				let clicked = this.sound.add("clickedBtn");
 				// this.add.graphics().setDepth(0).fillStyle(0x000000, 0.8).fillRect(0, 0, this.gameWidth, this.gameHeight);
 				var dialogBg = this.add.sprite(this.halfWidth, this.halfHeight, "bgDialog");
-				dialogBg.setScale(0.5 * dpr);
-				this.inputText = this.add.rexInputText(this.halfWidth, this.halfHeight + (48 * dpr), 220 * dpr, 35 * dpr, {
+				dialogBg.setScale(0.4 * dpr);
+				this.inputText = this.add.rexInputText(this.halfWidth, this.halfHeight + (40 * dpr), 220 * dpr, 35 * dpr, {
 					// Style properties
 					align: "center",
 					fontSize: `${16 * dpr}px`,
@@ -378,7 +378,7 @@ export async function updateScore(newScore) {
 					placeholder: 'MASUKKAN USERNAME'
 				});
 	
-				this.inputText2 = this.add.rexInputText(this.halfWidth, this.halfHeight + (122 * dpr), 220 * dpr, 35 * dpr, {
+				this.inputText2 = this.add.rexInputText(this.halfWidth, this.halfHeight + (98 * dpr), 220 * dpr, 35 * dpr, {
 					// Style properties
 					align: "center",
 					fontSize: `${16 * dpr}px`,
@@ -404,8 +404,8 @@ export async function updateScore(newScore) {
 				}, this);
 	
 				let world = this;
-				this.btnOk = this.add.sprite(this.halfWidth, this.halfHeight + (200 * dpr), "okButton");
-				this.btnOk.setScale(0.3 * dpr);
+				this.btnOk = this.add.sprite(this.halfWidth, this.halfHeight + (160 * dpr), "okButton");
+				this.btnOk.setScale(0.25 * dpr);
 				this.btnOk.setInteractive();
 				this.btnOk.on("pointerover", function () {
 	
