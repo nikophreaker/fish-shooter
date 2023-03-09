@@ -76,40 +76,11 @@ export async function updateScore(newScore) {
 		//start load sound
 		loadSound();
 		const canvas = document.getElementById("container");
-		if (screen.orientation.type == "portrait" || screen.orientation.type == "portrait-primary" || screen.orientation.type == "portrait-secondary") {
-			document.getElementById("outer").style.backgroundImage = "url(./images/turn.png)";
-			document.getElementById("middle").style.visibility = "hidden";
-		} else {
-			document.getElementById("outer").style.backgroundImage = "";
-			document.getElementById("middle").style.visibility = "visible";
-			if (first) {
-				first = false;
-				let gameConfig = {
-					type: Phaser.CANVAS,
-					scale: {
-						mode: Phaser.Scale.FIT,
-						autoCenter: Phaser.Scale.CENTER_BOTH,
-						parent: "leaderboard",
-						width: 980 * dpr,
-						height: 453 * dpr,
-					},
-					dom: {
-						createContainer: true
-					},
-					transparent: true,
-					backgroundColor: 0x2A3141, //0xD30000,
-					scene: [InputData, Leaderboard]
-				};
-				var games = new Phaser.Game(gameConfig);
-				window.focus();
-				setTimeout(function () {
-					game.load();
-				}, 10);
-			}
-		}
-
-		window.addEventListener("orientationchange", function() {
-			if (screen.orientation.type == "landscape" || screen.orientation.type == "landscape-primary" || screen.orientation.type == "landscape-secondary") {
+		if (screen != undefined) {
+			if (screen.orientation.type == "portrait" || screen.orientation.type == "portrait-primary" || screen.orientation.type == "portrait-secondary") {
+				document.getElementById("outer").style.backgroundImage = "url(./images/turn.png)";
+				document.getElementById("middle").style.visibility = "hidden";
+			} else {
 				document.getElementById("outer").style.backgroundImage = "";
 				document.getElementById("middle").style.visibility = "visible";
 				if (first) {
@@ -121,7 +92,7 @@ export async function updateScore(newScore) {
 							autoCenter: Phaser.Scale.CENTER_BOTH,
 							parent: "leaderboard",
 							width: 980 * dpr,
-							height: 453* dpr,
+							height: 453 * dpr,
 						},
 						dom: {
 							createContainer: true
@@ -136,9 +107,111 @@ export async function updateScore(newScore) {
 						game.load();
 					}, 10);
 				}
-			} else {
+			}
+		} else {
+			var mql = window.matchMedia("(orientation: portrait)");
+
+			if (mql.matches) {
 				document.getElementById("outer").style.backgroundImage = "url(./images/turn.png)";
 				document.getElementById("middle").style.visibility = "hidden";
+			} else {
+				document.getElementById("outer").style.backgroundImage = "";
+				document.getElementById("middle").style.visibility = "visible";
+				if (first) {
+					first = false;
+					let gameConfig = {
+						type: Phaser.CANVAS,
+						scale: {
+							mode: Phaser.Scale.FIT,
+							autoCenter: Phaser.Scale.CENTER_BOTH,
+							parent: "leaderboard",
+							width: 980 * dpr,
+							height: 453 * dpr,
+						},
+						dom: {
+							createContainer: true
+						},
+						transparent: true,
+						backgroundColor: 0x2A3141, //0xD30000,
+						scene: [InputData, Leaderboard]
+					};
+					var games = new Phaser.Game(gameConfig);
+					window.focus();
+					setTimeout(function () {
+						game.load();
+					}, 10);
+				}
+			}
+
+		}
+
+		window.addEventListener("orientationchange", function() {
+			if (screen != undefined) {
+				if (screen.orientation.type == "landscape" || screen.orientation.type == "landscape-primary" || screen.orientation.type == "landscape-secondary") {
+					document.getElementById("outer").style.backgroundImage = "";
+					document.getElementById("middle").style.visibility = "visible";
+					if (first) {
+						first = false;
+						let gameConfig = {
+							type: Phaser.CANVAS,
+							scale: {
+								mode: Phaser.Scale.FIT,
+								autoCenter: Phaser.Scale.CENTER_BOTH,
+								parent: "leaderboard",
+								width: 980 * dpr,
+								height: 453* dpr,
+							},
+							dom: {
+								createContainer: true
+							},
+							transparent: true,
+							backgroundColor: 0x2A3141, //0xD30000,
+							scene: [InputData, Leaderboard]
+						};
+						var games = new Phaser.Game(gameConfig);
+						window.focus();
+						setTimeout(function () {
+							game.load();
+						}, 10);
+					}
+				} else {
+					document.getElementById("outer").style.backgroundImage = "url(./images/turn.png)";
+					document.getElementById("middle").style.visibility = "hidden";
+				}
+			} else {
+				var mql = window.matchMedia("(orientation: portrait)");
+
+				if (mql.matches) {
+					document.getElementById("outer").style.backgroundImage = "url(./images/turn.png)";
+					document.getElementById("middle").style.visibility = "hidden";
+				} else {
+					document.getElementById("outer").style.backgroundImage = "";
+					document.getElementById("middle").style.visibility = "visible";
+					if (first) {
+						first = false;
+						let gameConfig = {
+							type: Phaser.CANVAS,
+							scale: {
+								mode: Phaser.Scale.FIT,
+								autoCenter: Phaser.Scale.CENTER_BOTH,
+								parent: "leaderboard",
+								width: 980 * dpr,
+								height: 453* dpr,
+							},
+							dom: {
+								createContainer: true
+							},
+							transparent: true,
+							backgroundColor: 0x2A3141, //0xD30000,
+							scene: [InputData, Leaderboard]
+						};
+						var games = new Phaser.Game(gameConfig);
+						window.focus();
+						setTimeout(function () {
+							game.load();
+						}, 10);
+					}
+				}
 			}
 		});
 	};
