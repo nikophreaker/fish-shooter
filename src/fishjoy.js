@@ -76,7 +76,7 @@ export async function updateScore(newScore) {
 		//start load sound
 		loadSound();
 		const canvas = document.getElementById("container");
-		if (screen.orientation.type != undefined) {
+		if (screen.orientation != undefined) {
 			if (screen.orientation.type == "portrait" || screen.orientation.type == "portrait-primary" || screen.orientation.type == "portrait-secondary") {
 				document.getElementById("outer").style.backgroundImage = "url(./images/turn.png)";
 				document.getElementById("middle").style.visibility = "hidden";
@@ -146,7 +146,7 @@ export async function updateScore(newScore) {
 		}
 
 		window.addEventListener("orientationchange", function() {
-			if (screen.orientation.type != undefined) {
+			if (screen.orientation != undefined) {
 				if (screen.orientation.type == "landscape" || screen.orientation.type == "landscape-primary" || screen.orientation.type == "landscape-secondary") {
 					document.getElementById("outer").style.backgroundImage = "";
 					document.getElementById("middle").style.visibility = "visible";
