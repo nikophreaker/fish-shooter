@@ -55,16 +55,33 @@ const analytics = getAnalytics(app);
 // Initialize Realtime Database and get a reference to the service
 const database = getDatabase(app);
 
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const uid = urlParams.get('uid');
+
 // Initialize Firestore Database and get document
 const db = getFirestore(app);
 const col = "fishshoot-m88-leaderboard";
-const colRef = collection(db, col);
+const col2 = "akumaujuara-users";
+const col3 = "akumaujuara-fishshoot-leaderboard";
+const colRef = collection(db, col3); //col yang biasa di simpan dulu
+const docRef = doc(db, col2, String(uid));
+const docRef2 = doc(db, col3, String(uid));
+async function getUserData() {
+	const data = await getDoc(docRef);
+	console.log(data.data());
+	return data.exists() ? data.data() : null
+}
+
 
 var first = true;
 var name, telp;
 export async function updateScore(newScore) {
-	let playerRef = doc(db, col, String(telp));
-	return await updateDoc(playerRef, {
+	// let playerRef = doc(db, col, String(telp));
+	// return await updateDoc(playerRef, {
+	// 	score: newScore
+	//   });
+	return await updateDoc(docRef2, {
 		score: newScore
 	  });
 }
@@ -302,59 +319,92 @@ export async function updateScore(newScore) {
 	
 				});
 				this.btnOk.on("pointerdown", async function () {
-					if (click1) {
-						click1 = false;
-						clicked.play();
-						let txt = inputText.text
-						let txt2 = inputText2.text
-						// GET KODE DATA
-						if (txt != "" && txt != undefined && txt != null) {
-							if (txt2 != "" && txt2 != undefined && txt2 != null) {
-								var username = name = txt;
-								var notelp = telp = txt2;
-								//GET USER DOC
-								let docRef = doc(db, col, String(notelp));
-								let q = query(colRef, where("name", "==", String(username)));
-								let data = await getDocs(q);
-								if (data.size == 0 ) {
-									let q = query(colRef, where("notelp", "==", String(notelp)));
+					if (uid != null) {
+						if (click1) {
+							click1 = false;
+							clicked.play();
+							getUserData().then( async (data) => {
+								let name = data.Fullname
+								let email = data.Email
+								let phone = data.Phone
+								await setDoc(docRef2, {
+									name: name,
+									email: email,
+									phone: phone,
+									score: 1000,
+									date: tglIndonesia(),
+									timestamp: Math.floor(Date.now() / 1000),
+								}).then(()=>{
+									setTimeout(function () {
+										world.scene.stop("InputData");
+										document.getElementById("leaderboard").style.zIndex = "-1";
+										game.setBtnLeaderboard(world);
+										click1 = true;
+									}, 10);
+									setTimeout(function () {
+										document.getElementById("banner").style.visibility = "visible";
+									}, 5000);
+								}).catch((error) => {
+									click1 = true;
+									alert(`Error ${error}`);
+								});
+							})
+						}
+					} else {
+						if (click1) {
+							click1 = false;
+							clicked.play();
+							let txt = inputText.text
+							let txt2 = inputText2.text
+							// GET KODE DATA
+							if (txt != "" && txt != undefined && txt != null) {
+								if (txt2 != "" && txt2 != undefined && txt2 != null) {
+									var username = name = txt;
+									var notelp = telp = txt2;
+									//GET USER DOC
+									let docRef = doc(db, col, String(notelp));
+									let q = query(colRef, where("name", "==", String(username)));
 									let data = await getDocs(q);
 									if (data.size == 0 ) {
-										await setDoc(docRef, {
-											name: username,
-											notelp: notelp,
-											score: 1000,
-											date: tglIndonesia(),
-											timestamp: Math.floor(Date.now() / 1000),
-										}).then(()=>{
-											setTimeout(function () {
-												world.scene.stop("InputData");
-												document.getElementById("leaderboard").style.zIndex = "-1";
-												game.setBtnLeaderboard(world);
+										let q = query(colRef, where("notelp", "==", String(notelp)));
+										let data = await getDocs(q);
+										if (data.size == 0 ) {
+											await setDoc(docRef, {
+												name: username,
+												notelp: notelp,
+												score: 1000,
+												date: tglIndonesia(),
+												timestamp: Math.floor(Date.now() / 1000),
+											}).then(()=>{
+												setTimeout(function () {
+													world.scene.stop("InputData");
+													document.getElementById("leaderboard").style.zIndex = "-1";
+													game.setBtnLeaderboard(world);
+													click1 = true;
+												}, 10);
+												setTimeout(function () {
+													document.getElementById("banner").style.visibility = "visible";
+												}, 5000);
+											}).catch((error) => {
 												click1 = true;
-											}, 10);
-											setTimeout(function () {
-												document.getElementById("banner").style.visibility = "visible";
-											}, 5000);
-										}).catch((error) => {
+												alert(`Error ${error}`);
+											});
+										} else {
 											click1 = true;
-											alert(`Error ${error}`);
-										});
+											alert(`Nomor ${notelp} sudah terdaftar`);
+										}
 									} else {
 										click1 = true;
-										alert(`Nomor ${notelp} sudah terdaftar`);
+										alert(`Nama ${username} sudah terdaftar`);
 									}
 								} else {
 									click1 = true;
-									alert(`Nama ${username} sudah terdaftar`);
+									alert("No telp tidak boleh kosong!");
 								}
 							} else {
 								click1 = true;
-								alert("No telp tidak boleh kosong!");
+								alert("Nama tidak boleh kosong!");
 							}
-						} else {
-							click1 = true;
-							alert("Nama tidak boleh kosong!");
 						}
 					}
 				});
@@ -414,59 +464,92 @@ export async function updateScore(newScore) {
 	
 				});
 				this.btnOk.on("pointerdown", async function () {
-					if (click1) {
-						click1 = false;
-						clicked.play();
-						let txt = inputText.text
-						let txt2 = inputText2.text
-						// GET KODE DATA
-						if (txt != "" && txt != undefined && txt != null) {
-							if (txt2 != "" && txt2 != undefined && txt2 != null) {
-								var username = name = txt;
-								var notelp = telp = txt2;
-								//GET USER DOC
-								let docRef = doc(db, col, String(notelp));
-								let q = query(colRef, where("name", "==", String(username)));
-								let data = await getDocs(q);
-								if (data.size == 0 ) {
-									let q = query(colRef, where("notelp", "==", String(notelp)));
+					if (uid != null) {
+						if (click1) {
+							click1 = false;
+							clicked.play();
+							getUserData().then( async (data) => {
+								let name = data.Fullname
+								let email = data.Email
+								let phone = data.Phone
+								await setDoc(docRef2, {
+									name: name,
+									email: email,
+									phone: phone,
+									score: 1000,
+									date: tglIndonesia(),
+									timestamp: Math.floor(Date.now() / 1000),
+								}).then(()=>{
+									setTimeout(function () {
+										world.scene.stop("InputData");
+										document.getElementById("leaderboard").style.zIndex = "-1";
+										game.setBtnLeaderboard(world);
+										click1 = true;
+									}, 10);
+									setTimeout(function () {
+										document.getElementById("banner").style.visibility = "visible";
+									}, 5000);
+								}).catch((error) => {
+									click1 = true;
+									alert(`Error ${error}`);
+								});
+							})
+						}
+					} else {
+						if (click1) {
+							click1 = false;
+							clicked.play();
+							let txt = inputText.text
+							let txt2 = inputText2.text
+							// GET KODE DATA
+							if (txt != "" && txt != undefined && txt != null) {
+								if (txt2 != "" && txt2 != undefined && txt2 != null) {
+									var username = name = txt;
+									var notelp = telp = txt2;
+									//GET USER DOC
+									let docRef = doc(db, col, String(notelp));
+									let q = query(colRef, where("name", "==", String(username)));
 									let data = await getDocs(q);
 									if (data.size == 0 ) {
-										await setDoc(docRef, {
-											name: username,
-											notelp: notelp,
-											score: 1000,
-											date: tglIndonesia(),
-											timestamp: Math.floor(Date.now() / 1000),
-										}).then(()=>{
-											setTimeout(function () {
-												world.scene.stop("InputData");
-												document.getElementById("leaderboard").style.zIndex = "-1";
-												game.setBtnLeaderboard(world);
+										let q = query(colRef, where("notelp", "==", String(notelp)));
+										let data = await getDocs(q);
+										if (data.size == 0 ) {
+											await setDoc(docRef, {
+												name: username,
+												notelp: notelp,
+												score: 1000,
+												date: tglIndonesia(),
+												timestamp: Math.floor(Date.now() / 1000),
+											}).then(()=>{
+												setTimeout(function () {
+													world.scene.stop("InputData");
+													document.getElementById("leaderboard").style.zIndex = "-1";
+													game.setBtnLeaderboard(world);
+													click1 = true;
+												}, 10);
+												setTimeout(function () {
+													document.getElementById("banner").style.visibility = "visible";
+												}, 5000);
+											}).catch((error) => {
 												click1 = true;
-											}, 10);
-											setTimeout(function () {
-												document.getElementById("banner").style.visibility = "visible";
-											}, 5000);
-										}).catch((error) => {
+												alert(`Error ${error}`);
+											});
+										} else {
 											click1 = true;
-											alert(`Error ${error}`);
-										});
+											alert(`Nomor ${notelp} sudah terdaftar`);
+										}
 									} else {
 										click1 = true;
-										alert(`Nomor ${notelp} sudah terdaftar`);
+										alert(`Nama ${username} sudah terdaftar`);
 									}
 								} else {
 									click1 = true;
-									alert(`Nama ${username} sudah terdaftar`);
+									alert("No telp tidak boleh kosong!");
 								}
 							} else {
 								click1 = true;
-								alert("No telp tidak boleh kosong!");
+								alert("Nama tidak boleh kosong!");
 							}
-						} else {
-							click1 = true;
-							alert("Nama tidak boleh kosong!");
 						}
 					}
 				});
