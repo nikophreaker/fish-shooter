@@ -311,8 +311,12 @@ export async function updateScore(newScore) {
 				}, this);
 	
 				let world = this;
-				this.btnOk = this.add.sprite(this.halfWidth + (8 * dpr), this.halfHeight + (140 * dpr), uid != null ? "startButton" : "okButton");
-				this.btnOk.setScale(0.2 * dpr);
+				this.btnOk = this.add.sprite(this.halfWidth + (8 * dpr), uid != null ? this.halfHeight + (80 * dpr) : this.halfHeight + (140 * dpr), uid != null ? "startButton" : "okButton");
+				if (uid != null) {
+					inputText.setActive(false).setVisible(false);
+					inputText2.setActive(false).setVisible(false);
+				}
+				this.btnOk.setScale(uid != null ? (0.35 * dpr) : (0.2 * dpr));
 				this.btnOk.setInteractive();
 				this.btnOk.on("pointerover", function () {
 	
@@ -456,7 +460,11 @@ export async function updateScore(newScore) {
 				}, this);
 	
 				let world = this;
-				this.btnOk = this.add.sprite(this.halfWidth+ (8 * dpr), this.halfHeight + (160 * dpr), uid != null ? "startButton" : "okButton");
+				this.btnOk = this.add.sprite(this.halfWidth+ (8 * dpr), uid != null ? this.halfHeight + (80 * dpr) : this.halfHeight + (160 * dpr), uid != null ? "startButton" : "okButton");
+				if (uid != null) {
+					inputText.setActive(false).setVisible(false);
+					inputText2.setActive(false).setVisible(false);
+				}
 				this.btnOk.setScale(0.25 * dpr);
 				this.btnOk.setInteractive();
 				this.btnOk.on("pointerover", function () {
